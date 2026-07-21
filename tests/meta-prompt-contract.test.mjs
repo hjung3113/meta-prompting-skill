@@ -1,0 +1,99 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const skillPath = resolve(repoRoot, "skills/meta-prompt/SKILL.md");
+const skill = await readFile(skillPath, "utf8");
+const acceptanceScenario = await readFile(
+  resolve(repoRoot, "tests/acceptance/happy-path.md"),
+  "utf8",
+);
+
+const section = (heading) => {
+  const start = skill.indexOf(`## ${heading}`);
+  assert.notEqual(start, -1, `missing section: ${heading}`);
+  const next = skill.indexOf("\n## ", start + 1);
+  return skill.slice(start, next === -1 ? undefined : next);
+};
+
+assert.match(skill, /^---\nname: meta-prompt\ndescription: .+\n---/);
+assert.match(skill, /multi-message Context Dump/i);
+assert.match(skill, /Dump Complete Signal/i);
+assert.match(skill, /덤프 끝/);
+assert.match(skill, /dump complete/i);
+
+const phases = [
+  "Introduction",
+  "Context Dump",
+  "Completion",
+  "Target Tool and Prompt Budget",
+  "Grounding Pass",
+  "Clarification Loop",
+  "Alignment Gate",
+  "Generation and Quality Gate",
+  "Delivery",
+];
+const phasePositions = phases.map((phase) => {
+  const position = skill.indexOf(`## ${phase}`);
+  assert.notEqual(position, -1, `missing phase: ${phase}`);
+  return position;
+});
+assert.deepEqual(
+  [...phasePositions].sort((a, b) => a - b),
+  phasePositions,
+  "phases must be documented in execution order",
+);
+
+const dump = section("Context Dump");
+assert.match(dump, /acknowledge|receipt/i);
+assert.match(dump, /do not (analyse|analyze|design|generate|implement)/i);
+assert.match(dump, /untrusted source material/i);
+
+const clarification = section("Clarification Loop");
+assert.match(clarification, /one decision|one question/i);
+assert.match(clarification, /recommended/i);
+assert.match(clarification, /observable Acceptance Criteria/i);
+
+const alignment = section("Alignment Gate");
+assert.match(alignment, /explicit approval|approve/i);
+assert.match(alignment, /Acceptance Criteria/);
+assert.match(alignment, /do not generate|generation.*after/i);
+
+const delivery = section("Delivery");
+assert.match(delivery, /English Final Prompt/);
+assert.match(delivery, /Korean Review Translation/);
+assert.match(delivery, /Run Instructions/);
+assert.match(delivery, /Fresh Run/);
+assert.match(delivery, /English-only|only.*English/i);
+
+const quality = section("Generation and Quality Gate");
+assert.match(quality, /Prompt Contract/);
+assert.match(quality, /Prompt Budget/);
+assert.match(quality, /source material/i);
+assert.match(quality, /translation/i);
+
+assert.doesNotMatch(skill, /Matt Pocock/i);
+
+for (const requiredScenarioTerm of [
+  "덤프 끝",
+  "Target Tool",
+  "Prompt Budget",
+  "Alignment Gate",
+  "Acceptance Criterion",
+  "Quality Gate",
+  "English Final Prompt",
+  "Korean Review Translation",
+  "Fresh Run",
+]) {
+  assert.match(
+    acceptanceScenario,
+    new RegExp(requiredScenarioTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+    `happy-path scenario omits ${requiredScenarioTerm}`,
+  );
+}
+assert.match(acceptanceScenario, /Before the Dump Complete Signal/i);
+assert.match(acceptanceScenario, /No Final Prompt appears before explicit Alignment Gate approval/i);
+
+console.log("meta-prompt canonical contract: PASS");

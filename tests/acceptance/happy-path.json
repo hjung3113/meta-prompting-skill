@@ -1,0 +1,88 @@
+{
+  "name": "one portable Meta-Prompt Refinement Session",
+  "events": [
+    {
+      "actor": "skill",
+      "kind": "introduction",
+      "requires": ["multi-message Context Dump", "덤프 끝", "dump complete"]
+    },
+    {
+      "actor": "user",
+      "kind": "context-dump",
+      "text": "앱의 로그인 화면을 개선하고 싶어요. 현재 문제는 ..."
+    },
+    {
+      "actor": "skill",
+      "kind": "receipt",
+      "for": "context-dump"
+    },
+    {
+      "actor": "user",
+      "kind": "context-dump",
+      "text": "기존 프로젝트의 버튼 스타일을 유지해야 합니다."
+    },
+    {
+      "actor": "skill",
+      "kind": "receipt",
+      "for": "context-dump"
+    },
+    {
+      "actor": "user",
+      "kind": "dump-complete",
+      "text": "덤프 끝"
+    },
+    {
+      "actor": "skill",
+      "kind": "target-confirmation",
+      "requires": ["Target Tool", "Prompt Budget"]
+    },
+    {
+      "actor": "user",
+      "kind": "target-confirmation-response",
+      "text": "Target Tool: coding agent; Prompt Budget: recommended budget"
+    },
+    {
+      "actor": "skill",
+      "kind": "clarification",
+      "questionCount": 1,
+      "requires": ["one question at a time", "recommended answer"]
+    },
+    {
+      "actor": "user",
+      "kind": "clarification-response",
+      "text": "Use the recommended scope."
+    },
+    {
+      "actor": "skill",
+      "kind": "clarification",
+      "questionCount": 1,
+      "requires": ["one question at a time", "recommended answer"]
+    },
+    {
+      "actor": "skill",
+      "kind": "alignment-gate",
+      "requires": ["observable Acceptance Criteria", "explicit approval"]
+    },
+    {
+      "actor": "user",
+      "kind": "alignment-approval",
+      "text": "approve"
+    },
+    {
+      "actor": "skill",
+      "kind": "quality-gate",
+      "requires": ["Prompt Contract", "Prompt Budget", "translation"]
+    },
+    {
+      "actor": "skill",
+      "kind": "delivery",
+      "requires": [
+        "English Final Prompt",
+        "Korean Review Translation",
+        "Run Instructions",
+        "Fresh Run",
+        "English-only"
+      ]
+    }
+  ]
+}
