@@ -26,3 +26,8 @@ node tests/acceptance/validate-codex-smoke.mjs
 
 The smoke command is intentionally on-demand and is not part of routine CI,
 because it makes a live model call.
+
+For a complete capture, run `node tests/acceptance/capture-codex-smoke.mjs`.
+It creates the fresh git project, records each raw JSONL turn, commands, exit
+statuses, resolved skill link, hashes, version, and thread ID in its temporary
+directory. The supplied turns are synthetic; do not add real user context.
