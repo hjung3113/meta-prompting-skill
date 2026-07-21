@@ -33,7 +33,7 @@ node tests/acceptance/run-happy-path.mjs
   implementation, or generation appears; only receipt acknowledgements appear.
 - No Final Prompt appears before explicit Alignment Gate approval.
 - Delivery contains three separate artifacts in order: English Final Prompt,
-  Korean Review Translation, and Run Instructions.
+  Review Translation, and Run Instructions.
 - Run Instructions say to start a Fresh Run in the confirmed Target Tool and to
   copy only the English Final Prompt; the Korean translation is explicitly
   review-only.

@@ -14,6 +14,44 @@ export function runCanonicalAcceptanceScenario({ skill, scenario }) {
   let qualityGateSeen = false;
   let clarificationCount = 0;
 
+  const section = (heading) => {
+    const start = skill.indexOf(`## ${heading}`);
+    assert.notEqual(start, -1, `canonical skill is missing ${heading}`);
+    const next = skill.indexOf("\n## ", start + 1);
+    return skill.slice(start, next === -1 ? undefined : next);
+  };
+  const normalized = (text) => text.replace(/\s+/g, " ");
+
+  const introduction = normalized(section("Introduction"));
+  const contextDump = normalized(section("Context Dump"));
+  const completion = normalized(section("Completion"));
+  const clarification = normalized(section("Clarification Loop"));
+  const alignment = normalized(section("Alignment Gate"));
+  const generationAndQualityGate = normalized(section("Generation and Quality Gate"));
+  const delivery = normalized(section("Delivery"));
+
+  assert.match(introduction, /multi-message Context Dump/i);
+  assert.match(introduction, /덤프 끝/);
+  assert.match(introduction, /dump complete/i);
+  assert.match(contextDump, /do exactly two things/i);
+  assert.match(contextDump, /receipt acknowledgement/i);
+  assert.match(contextDump, /do not analyse, design, generate, or implement/i);
+  assert.match(contextDump, /do not infer completion/i);
+  assert.match(completion, /Target Tool/i);
+  assert.match(completion, /Prompt Budget/i);
+  assert.match(clarification, /exactly one decision question per turn/i);
+  assert.match(clarification, /recommended answer/i);
+  assert.match(alignment, /at least one observable Acceptance Criterion exists/i);
+  assert.match(alignment, /explicit approval/i);
+  assert.match(alignment, /do not generate, draft, or outline a Final Prompt before approval/i);
+  assert.match(generationAndQualityGate, /After explicit Alignment Gate approval/i);
+  assert.match(generationAndQualityGate, /mandatory Quality Gate/i);
+  assert.match(delivery, /exactly these three separately labelled artifacts, in this order/i);
+  assert.match(delivery, /English Final Prompt[\s\S]*Review Translation[\s\S]*Run Instructions/);
+  assert.match(delivery, /Korean rendering/i);
+  assert.match(delivery, /Fresh Run/i);
+  assert.match(delivery, /only the English Final Prompt/i);
+
   const expectedKinds = [
     "introduction",
     "context-dump",
@@ -106,11 +144,21 @@ export function runCanonicalAcceptanceScenario({ skill, scenario }) {
       assert.equal(qualityGateSeen, true, "delivery requires a preceding Quality Gate");
     }
 
+    const phaseInstructions = {
+      introduction,
+      receipt: contextDump,
+      "target-confirmation": completion,
+      clarification,
+      "alignment-gate": alignment,
+      "quality-gate": generationAndQualityGate,
+      delivery,
+    }[event.kind] ?? skill;
+
     for (const requirement of event.requires ?? []) {
       assert.match(
-        skill,
+        phaseInstructions,
         new RegExp(requirement.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
-        `${event.kind} requirement is absent from the canonical skill: ${requirement}`,
+        `${event.kind} requirement is absent from its canonical phase instructions: ${requirement}`,
       );
     }
   }

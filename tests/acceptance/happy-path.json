@@ -61,7 +61,7 @@
     {
       "actor": "skill",
       "kind": "alignment-gate",
-      "requires": ["observable Acceptance Criteria", "explicit approval"]
+      "requires": ["at least one observable Acceptance Criterion", "explicit approval"]
     },
     {
       "actor": "user",
@@ -78,10 +78,10 @@
       "kind": "delivery",
       "requires": [
         "English Final Prompt",
-        "Korean Review Translation",
+        "Review Translation",
         "Run Instructions",
         "Fresh Run",
-        "English-only"
+        "only the English Final Prompt"
       ]
     }
   ]

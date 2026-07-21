@@ -1,6 +1,6 @@
 ---
 name: meta-prompt
-description: Guide a user through a portable Meta-Prompt Refinement Session and deliver an English Final Prompt, Korean Review Translation, and Run Instructions.
+description: Guide a user through a portable Meta-Prompt Refinement Session and deliver an English Final Prompt, Review Translation, and Run Instructions.
 ---
 
 # Meta-Prompt
@@ -108,7 +108,7 @@ be accepted or replaced by the user. Also confirm the Prompt Budget. A
 user-supplied limit has priority; if none is supplied, recommend a practical
 budget based on the Target Tool's known constraints, state that it is a
 recommendation, and invite an override. The Prompt Budget applies only to the
-English Final Prompt, not to the Korean Review Translation or Run Instructions.
+English Final Prompt, not to the Review Translation or Run Instructions.
 
 Ask for confirmation of Target Tool and Prompt Budget as one decision at a
 time. If both are already unambiguously confirmed by the user, state the
@@ -116,7 +116,9 @@ recorded values and continue without asking them again.
 
 ## Target Tool and Prompt Budget
 
-Record these two values explicitly in the session brief:
+Record these two values explicitly in the session state. If the user approves
+an optional Session Brief, include them there without persisting the raw
+Context Dump:
 
 - **Target Tool** — the coding agent that will execute the Final Prompt in the
   Fresh Run, distinct from the host running Meta-Prompt.
@@ -221,8 +223,7 @@ repair the Final Prompt for all of the following:
 - fit for the confirmed Target Tool and its Fresh Run;
 - observable Acceptance Criteria and executable verification;
 - clear separation of source material from executable instructions; and
-- semantic consistency between the Final Prompt and its Korean Review
-  Translation.
+- semantic consistency between the Final Prompt and its Review Translation.
 
 Report the Quality Gate result outside the Final Prompt. If any check fails,
 repair it and rerun the affected check before delivery. Never claim a pass
@@ -238,7 +239,7 @@ Deliver exactly these three separately labelled artifacts, in this order:
 Put the paste-ready English execution instructions in one clearly delimited
 block. This is the only artifact to copy to the Target Tool.
 
-### Korean Review Translation
+### Review Translation
 
 Provide a separate Korean rendering of the English Final Prompt for meaning
 verification. It is review-only, is not part of the Prompt Budget, and must not

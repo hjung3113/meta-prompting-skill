@@ -42,7 +42,7 @@ _Avoid_: Draft, summary, runbook
 
 **Review Translation**:
 A Korean rendering of the Final Prompt shown separately so the user can verify its meaning. It is not part of the Prompt Budget and is not pasted into the Fresh Run.
-_Avoid_: Bilingual execution prompt, second prompt, embedded translation
+_Avoid_: Korean Review Translation, bilingual execution prompt, second prompt, embedded translation
 
 **Run Instructions**:
 Guidance kept outside the Final Prompt that tells the user where and how to run it, what context to attach, and how to verify the result.

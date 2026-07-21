@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { runCanonicalAcceptanceScenario } from "./acceptance/run-happy-path.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const skillPath = resolve(repoRoot, "skills/meta-prompt/SKILL.md");
@@ -9,6 +10,9 @@ const skill = await readFile(skillPath, "utf8");
 const acceptanceScenario = await readFile(
   resolve(repoRoot, "tests/acceptance/happy-path.md"),
   "utf8",
+);
+const acceptanceScenarioJson = JSON.parse(
+  await readFile(resolve(repoRoot, "tests/acceptance/happy-path.json"), "utf8"),
 );
 
 const section = (heading) => {
@@ -63,7 +67,8 @@ assert.match(alignment, /do not generate|generation.*after/i);
 
 const delivery = section("Delivery");
 assert.match(delivery, /English Final Prompt/);
-assert.match(delivery, /Korean Review Translation/);
+assert.match(delivery, /Review Translation/);
+assert.match(delivery, /Korean rendering/i);
 assert.match(delivery, /Run Instructions/);
 assert.match(delivery, /Fresh Run/);
 assert.match(delivery, /English-only|only.*English/i);
@@ -75,6 +80,17 @@ assert.match(quality, /source material/i);
 assert.match(quality, /translation/i);
 
 assert.doesNotMatch(skill, /Matt Pocock/i);
+assert.doesNotMatch(skill, /Korean Review Translation/);
+
+assert.throws(
+  () =>
+    runCanonicalAcceptanceScenario({
+      skill: skill.replace("Do not analyse, design, generate, or implement", "Do not act"),
+      scenario: acceptanceScenarioJson,
+    }),
+  /do not analyse, design, generate, or implement/i,
+  "the acceptance runner must reject a canonical skill that permits pre-signal work",
+);
 
 for (const requiredScenarioTerm of [
   "덤프 끝",
@@ -84,7 +100,7 @@ for (const requiredScenarioTerm of [
   "Acceptance Criterion",
   "Quality Gate",
   "English Final Prompt",
-  "Korean Review Translation",
+  "Review Translation",
   "Fresh Run",
 ]) {
   assert.match(
