@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const acceptanceDirectory = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(acceptanceDirectory, "../..");
 
-export function runCanonicalAcceptanceScenario({ skill, scenario }) {
+export function validateStaticSkillContract({ skill, scenario }) {
   let dumpOpen = true;
   let signalSeen = false;
   let alignmentApproved = false;
@@ -59,11 +59,14 @@ export function runCanonicalAcceptanceScenario({ skill, scenario }) {
     "context-dump",
     "receipt",
     "dump-complete",
-    "target-confirmation",
-    "target-confirmation-response",
+    "target-tool-question",
+    "target-tool-response",
+    "prompt-budget-question",
+    "prompt-budget-response",
     "clarification",
     "clarification-response",
     "clarification",
+    "clarification-response",
     "alignment-gate",
     "alignment-approval",
     "quality-gate",
@@ -103,15 +106,18 @@ export function runCanonicalAcceptanceScenario({ skill, scenario }) {
       continue;
     }
 
-    if (event.actor === "skill" && event.kind === "target-confirmation") {
+    if (event.actor === "skill" && event.kind === "target-tool-question") {
       assert.equal(signalSeen, true, "target confirmation requires completion");
       targetConfirmed = true;
     }
 
-    if (event.actor === "user" && event.kind === "target-confirmation-response") {
-      assert.equal(targetConfirmed, true, "Target Tool and Prompt Budget require confirmation");
-      assert.match(event.text, /Target Tool/i);
-      assert.match(event.text, /Prompt Budget/i);
+    if (event.actor === "user" && event.kind === "target-tool-response") {
+      assert.equal(targetConfirmed, true, "Target Tool requires confirmation");
+      assert.match(event.text, /Codex/i);
+    }
+
+    if (event.actor === "user" && event.kind === "prompt-budget-response") {
+      assert.match(event.text, /\d+\s+English words/i, "Prompt Budget must be concrete");
     }
 
     if (event.actor === "skill" && event.kind === "alignment-gate") {
@@ -147,7 +153,8 @@ export function runCanonicalAcceptanceScenario({ skill, scenario }) {
     const phaseInstructions = {
       introduction,
       receipt: contextDump,
-      "target-confirmation": completion,
+      "target-tool-question": completion,
+      "prompt-budget-question": completion,
       clarification,
       "alignment-gate": alignment,
       "quality-gate": generationAndQualityGate,
@@ -181,9 +188,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     readFile(resolve(repoRoot, "skills/meta-prompt/SKILL.md"), "utf8"),
     readFile(resolve(acceptanceDirectory, "happy-path.json"), "utf8"),
   ]);
-  const result = runCanonicalAcceptanceScenario({
+  const result = validateStaticSkillContract({
     skill,
     scenario: JSON.parse(scenarioJson),
   });
-  console.log(`canonical happy-path acceptance: ${result.status} (${result.eventCount} events)`);
+  console.log(`static canonical skill contract: ${result.status} (${result.eventCount} events)`);
 }

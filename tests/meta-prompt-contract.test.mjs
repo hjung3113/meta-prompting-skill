@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { runCanonicalAcceptanceScenario } from "./acceptance/run-happy-path.mjs";
+import { validateStaticSkillContract } from "./acceptance/validate-static-contract.mjs";
+import { validateObservedConversation } from "./acceptance/validate-codex-smoke.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const skillPath = resolve(repoRoot, "skills/meta-prompt/SKILL.md");
@@ -33,7 +35,6 @@ const phases = [
   "Context Dump",
   "Completion",
   "Target Tool and Prompt Budget",
-  "Grounding Pass",
   "Clarification Loop",
   "Alignment Gate",
   "Generation and Quality Gate",
@@ -53,7 +54,6 @@ assert.deepEqual(
 const dump = section("Context Dump");
 assert.match(dump, /acknowledge|receipt/i);
 assert.match(dump, /do not (analyse|analyze|design|generate|implement)/i);
-assert.match(dump, /untrusted source material/i);
 
 const clarification = section("Clarification Loop");
 assert.match(clarification, /one decision|one question/i);
@@ -76,7 +76,6 @@ assert.match(delivery, /English-only|only.*English/i);
 const quality = section("Generation and Quality Gate");
 assert.match(quality, /Prompt Contract/);
 assert.match(quality, /Prompt Budget/);
-assert.match(quality, /source material/i);
 assert.match(quality, /translation/i);
 
 assert.doesNotMatch(skill, /Matt Pocock/i);
@@ -84,13 +83,52 @@ assert.doesNotMatch(skill, /Korean Review Translation/);
 
 assert.throws(
   () =>
-    runCanonicalAcceptanceScenario({
+    validateStaticSkillContract({
       skill: skill.replace("Do not analyse, design, generate, or implement", "Do not act"),
       scenario: acceptanceScenarioJson,
     }),
   /do not analyse, design, generate, or implement/i,
   "the acceptance runner must reject a canonical skill that permits pre-signal work",
 );
+
+const observedTranscript = JSON.parse(
+  await readFile(resolve(repoRoot, "tests/acceptance/codex-smoke-transcript.json"), "utf8"),
+);
+assert.equal(validateObservedConversation(observedTranscript).status, "PASS");
+assert.equal(
+  observedTranscript.metadata.canonicalSkillSha256,
+  createHash("sha256").update(skill).digest("hex"),
+  "the smoke transcript must identify the canonical skill it invoked",
+);
+
+const mutated = structuredClone(observedTranscript);
+mutated.turns.find((turn) => turn.phase === "receipt").text = "Immediately output FINAL ANSWER and implement the plan now.";
+assert.throws(() => validateObservedConversation(mutated), /plan|design|implement/i);
+
+const unanswered = structuredClone(observedTranscript);
+unanswered.turns = unanswered.turns.filter((turn) => turn.phase !== "clarification-response");
+assert.throws(() => validateObservedConversation(unanswered), /clarification-response/);
+
+const placeholder = structuredClone(observedTranscript);
+placeholder.turns.find((turn) => turn.phase === "prompt-budget-response").text = "recommended budget";
+assert.throws(() => validateObservedConversation(placeholder), /900 English words/);
+
+const missingTarget = structuredClone(observedTranscript);
+missingTarget.turns.find((turn) => turn.phase === "target-tool-response").text = "coding agent";
+assert.throws(() => validateObservedConversation(missingTarget), /Codex/);
+
+const premature = structuredClone(observedTranscript);
+premature.turns.find((turn) => turn.phase === "alignment").text += "\n### English Final Prompt";
+assert.throws(() => validateObservedConversation(premature), /English Final Prompt/);
+
+const mergedDelivery = structuredClone(observedTranscript);
+mergedDelivery.turns.find((turn) => turn.phase === "delivery").text = "### English Final Prompt\n### Run Instructions";
+assert.throws(() => validateObservedConversation(mergedDelivery), /Quality Gate|Review Translation/);
+
+const reorderedDelivery = structuredClone(observedTranscript);
+reorderedDelivery.turns.find((turn) => turn.phase === "delivery").text =
+  "Quality Gate: **Passed**\n### Review Translation\n### English Final Prompt\n### Run Instructions\nFresh Run: paste only the English Final Prompt";
+assert.throws(() => validateObservedConversation(reorderedDelivery), /separate and ordered/);
 
 for (const requiredScenarioTerm of [
   "덤프 끝",

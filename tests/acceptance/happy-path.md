@@ -20,11 +20,13 @@ Dump Complete Signal. The scenario intentionally includes two
 clarification turns, a Target Tool and Prompt Budget response, explicit
 Alignment Gate approval, and a Quality Gate before delivery.
 
-The model-free acceptance runner invokes the canonical skill contract and
-rejects any missing, reordered, or pre-gate event:
+The static contract validator checks that the canonical skill documents the
+required phases and gates. It is not behavioral acceptance evidence; use the
+recorded Codex smoke transcript and its validator for that evidence:
 
 ```sh
-node tests/acceptance/run-happy-path.mjs
+node tests/acceptance/validate-static-contract.mjs
+node tests/acceptance/validate-codex-smoke.mjs
 ```
 
 ## Then

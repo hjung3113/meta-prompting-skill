@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "recordedAt": "2026-07-22",
+    "host": "Codex CLI",
+    "hostVersion": "codex-cli 0.144.6",
+    "model": "Codex configured model",
+    "canonicalSkillPath": "skills/meta-prompt/SKILL.md",
+    "canonicalSkillSha256": "1b4839168047e3cf107ec58474a5c75c2892ee255bcb5e2dff7f294988d51a1f",
+    "discovery": "fresh temporary git project with .agents/skills/meta-prompt symlinked to the canonical skill",
+    "command": "codex exec --json -C <fresh-project> '$meta-prompt', then codex exec resume --json <thread-id> <one-user-turn>",
+    "threadId": "019f85be-caa3-7250-a003-c83f79627a61",
+    "result": "PASS"
+  },
+  "turns": [
+    {"role":"assistant","phase":"introduction","text":"컨텍스트 덤프를 보내 주세요. 여러 메시지에 걸쳐 목표, 메모, 제약, 예시, 코드, 링크를 자유롭게 담아도 됩니다. 덤프 중에는 저는 짧게 접수만 하고 분석·설계·실행은 하지 않습니다. 마지막 내용에 `덤프 끝`을 붙여 종료해 주세요."},
+    {"role":"user","phase":"context-dump","text":"I need a plan for a fictional bookmark manager. It needs a command-line interface and offline storage."},
+    {"role":"assistant","phase":"receipt","text":"받았습니다. 계속 보내시거나, 덤프를 마치려면 `덤프 끝`이라고 적어 주세요."},
+    {"role":"user","phase":"dump-complete","text":"The plan should exclude cloud sync and graphical interfaces. Success means it lists, adds, and removes bookmarks in a local file. 덤프 끝"},
+    {"role":"assistant","phase":"target-tool","text":"컨텍스트 덤프를 닫았습니다. 대상 도구를 먼저 확인하겠습니다. 현재 세션 호스트는 Codex이므로 새 실행에서 대상도 Codex를 권장합니다. CLI와 로컬 파일 작업을 실행하고 검증하기에 적합하기 때문입니다. 대상 도구를 Codex로 확정할까요?"},
+    {"role":"user","phase":"target-tool-response","text":"Confirm Codex as the Target Tool."},
+    {"role":"assistant","phase":"prompt-budget","text":"Target Tool recorded: Codex. Next, the Prompt Budget: I recommend 900 English words maximum for the Final Prompt. It is enough to specify the plan deliverable and concrete verification without becoming hard to follow in a fresh Codex run. Confirm 900 words, or provide a different maximum and counting rule?"},
+    {"role":"user","phase":"prompt-budget-response","text":"Confirm a Prompt Budget of 900 English words maximum."},
+    {"role":"assistant","phase":"clarification","text":"One decision remains open: the exact planning deliverable. I recommend a concise Markdown implementation plan returned in the response because the dump does not specify its format. Should we adopt that deliverable?"},
+    {"role":"user","phase":"clarification-response","text":"Use a standalone Markdown plan returned only in the response."},
+    {"role":"assistant","phase":"clarification","text":"One interface decision remains. I recommend three required commands—add, list, and remove—with generated IDs, required URL, and optional title and tags. This keeps add/list/remove easy to verify. Adopt this minimal command and data model?"},
+    {"role":"user","phase":"clarification-response","text":"Adopt the recommended commands and bookmark data model."},
+    {"role":"assistant","phase":"clarification","text":"One acceptance-criteria decision remains. I recommend a runnable verification scenario where add creates an ID, list shows it, remove removes it, and a later list no longer shows it. Adopt this acceptance criterion and automated tests?"},
+    {"role":"user","phase":"clarification-response","text":"Adopt that acceptance criterion and the recommended automated tests. All material decisions are resolved; present the Alignment Gate."},
+    {"role":"assistant","phase":"alignment","text":"## Alignment Gate\nGoal and actor: In a fresh Codex run, produce a standalone implementation plan for a fictional offline bookmark manager.\nDeliverable: Return one Markdown plan in Codex response only.\nIn scope: Node.js with TypeScript, local JSON persistence, and add, list, and remove commands.\nExplicit exclusions: No implementation, cloud sync, graphical interfaces, or external services.\nConstraints: Target Tool is Codex. English Final Prompt maximum is 900 English words.\nAcceptance Criteria and verification evidence: add creates a bookmark with an ID; list shows it; remove <id> removes it; a later list no longer shows it; automated tests cover validation.\nFailure conditions and edge cases: invalid URLs and missing IDs report clear failures.\nReply approve to authorize generation of the three delivery artifacts."},
+    {"role":"user","phase":"alignment-approval","text":"approve"},
+    {"role":"assistant","phase":"delivery","text":"### English Final Prompt\n```text\nYou are Codex. Produce a standalone Markdown implementation plan for a fictional offline bookmark manager. Return the plan directly in your response; do not implement the application. Define add, list, and remove commands backed by local JSON, observable acceptance criteria, verification steps, and failure handling. Exclude cloud sync, graphical interfaces, and external services.\n```\n\n### Review Translation\n```text\n당신은 Codex입니다. 가상의 오프라인 북마크 관리자를 위한 독립적인 Markdown 구현 계획을 작성하세요. 애플리케이션을 구현하지 말고, 로컬 JSON 기반 add, list, remove 명령, 관찰 가능한 수용 기준, 검증 절차, 실패 처리를 포함하세요.\n```\n\n### Run Instructions\nStart a **Fresh Run** in **Codex** and paste **only the English Final Prompt**. Do not include this refinement conversation or the Korean review translation.\n\nPrompt Budget: 900 English words maximum.\n\nQuality Gate: **Passed** — it covers the approved goal, exclusions, observable acceptance criteria, verification, and failure handling."}
+  ]
+}
