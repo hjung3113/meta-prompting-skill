@@ -25,7 +25,9 @@ if (command === "init") {
   mkdirSync(join(fresh, ".agents", "skills"), { recursive: true });
   spawnSync("git", ["init", "-q"], { cwd: fresh, stdio: "ignore" });
   symlinkSync(resolve(root, "skills/meta-prompt"), join(fresh, ".agents", "skills", "meta-prompt"));
-  atomic(statePath, { fresh, nextIndex: 0, threadId: null, entries: [], pending: null, resolved: [], phase: "bootstrap", skill: realpathSync(resolve(root, "skills/meta-prompt/SKILL.md")), skillSha256: hash(resolve(root, "skills/meta-prompt/SKILL.md")), supportedModel, captureUtc: new Date().toISOString() });
+  const skillLogicalPath = "skills/meta-prompt/SKILL.md";
+  const skillPath = resolve(root, skillLogicalPath);
+  atomic(statePath, { fresh, nextIndex: 0, threadId: null, entries: [], pending: null, resolved: [], phase: "bootstrap", skillLogicalPath, skillCapturePath: realpathSync(skillPath), skillSha256: hash(skillPath), supportedModel, captureUtc: new Date().toISOString() });
 }
 const state = JSON.parse(readFileSync(statePath, "utf8"));
 if (command === "step") {

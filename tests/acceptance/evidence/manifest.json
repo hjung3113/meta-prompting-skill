@@ -293,7 +293,8 @@
     "normalization"
   ],
   "phase": "complete",
-  "skill": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
+  "skillLogicalPath": "skills/meta-prompt/SKILL.md",
+  "skillCapturePath": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
   "skillSha256": "971a1271474da20ed12d1ef1b1dd240318c3bc596c187de7c1600cf11ff1c66d",
   "supportedModel": "gpt-5.6-terra",
   "captureUtc": "2026-07-21T21:41:41.339Z",

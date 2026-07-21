@@ -16,7 +16,8 @@ const section = (text, label) => {
   const body = text.slice(heads[index].index + heads[index][0].length, heads[index + 1]?.index ?? text.length);
   assert.ok(body.replace(/[\s`]/g, ""), `${label} is empty`); return body;
 };
-const canonicalSkill = resolve(directory, "../../skills/meta-prompt/SKILL.md");
+const canonicalSkillLogicalPath = "skills/meta-prompt/SKILL.md";
+const canonicalSkill = resolve(directory, "../..", canonicalSkillLogicalPath);
 const scenarioPath = resolve(directory, "codex-smoke-scenario.mjs");
 const lockPath = resolve(directory, "evidence-lock.json");
 const expectedFields = {
@@ -82,7 +83,8 @@ export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes,
   assert.match(manifest.captureUtc, /^20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/, "UTC capture timestamp");
   assert.match(manifest.hostVersion, /^codex-cli 0\.144\.6$/, "CLI version provenance");
   assert.match(manifest.threadId, /^[0-9a-f-]{36}$/i); assert.match(manifest.skillSha256, /^[a-f0-9]{64}$/);
-  assert.equal(manifest.skill, canonicalSkill, "canonical skill path provenance"); assert.match(manifest.fresh, /^\/tmp\/issue2-register-capture\./, "fresh project provenance");
+  assert.equal(manifest.skillLogicalPath, canonicalSkillLogicalPath, "canonical skill logical identity");
+  assert.match(manifest.skillCapturePath, /(?:^|\/)skills\/meta-prompt\/SKILL\.md$/, "historical skill capture path provenance"); assert.match(manifest.fresh, /^\/tmp\/issue2-register-capture\./, "fresh project provenance");
   assert.equal(manifest.skillSha256, sha(readFileSync(canonicalSkill)), "loaded canonical skill provenance");
   assert.equal(manifest.derivedSha256, sha(derivedBytes), "derived byte hash mismatch");
   assert.deepEqual(Object.keys(transcript), ["turns"]);
@@ -97,7 +99,7 @@ export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes,
   }
   const t = transcript.turns; validateSemanticContract(t);
   const lock = lockOverride ?? JSON.parse(readFileSync(lockPath, "utf8"));
-  assert.deepEqual({ threadId: manifest.threadId, skillSha256: sha(readFileSync(canonicalSkill)), scenarioSha256: sha(readFileSync(scenarioPath)), rawSha256: rawFiles.map((raw) => sha(raw)), derivedSha256: sha(derivedBytes) }, lock, "evidence lock provenance");
+  assert.deepEqual({ threadId: manifest.threadId, skillLogicalPath: canonicalSkillLogicalPath, skillSha256: sha(readFileSync(canonicalSkill)), scenarioSha256: sha(readFileSync(scenarioPath)), rawSha256: rawFiles.map((raw) => sha(raw)), derivedSha256: sha(derivedBytes) }, lock, "evidence lock provenance");
   return { status: "PASS", observedTurnCount: t.length };
 }
 if (process.argv[1] === fileURLToPath(import.meta.url)) { const e=resolve(directory,"evidence"), m=JSON.parse(await readFile(resolve(e,"manifest.json"))), b=await readFile(resolve(e,"derived-transcript.json")); const x=JSON.parse(b); const r=await Promise.all(m.entries.map((v)=>readFile(resolve(e,"raw",v.raw)))); console.log(`observed Codex smoke transcript: ${validateEvidence({transcript:x,manifest:m,rawFiles:r,derivedBytes:b}).status} (${x.turns.length} turns)`); }

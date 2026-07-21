@@ -10,12 +10,13 @@ import { decisionBank, resolveDecisionId } from "./acceptance/codex-smoke-scenar
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const evidence = resolve(root, "tests/acceptance/evidence");
 const hash = (value) => createHash("sha256").update(value).digest("hex");
-const [skill, scenarioText, manifestText, derivedBytes, scenarioBytes] = await Promise.all([
+const [skill, scenarioText, manifestText, derivedBytes, scenarioBytes, captureSource] = await Promise.all([
   readFile(resolve(root, "skills/meta-prompt/SKILL.md"), "utf8"),
   readFile(resolve(root, "tests/acceptance/happy-path.json"), "utf8"),
   readFile(resolve(evidence, "manifest.json"), "utf8"),
   readFile(resolve(evidence, "derived-transcript.json")),
   readFile(resolve(root, "tests/acceptance/codex-smoke-scenario.mjs")),
+  readFile(resolve(root, "tests/acceptance/capture-codex-smoke.mjs"), "utf8"),
 ]);
 const manifest = JSON.parse(manifestText);
 const transcript = JSON.parse(derivedBytes);
@@ -27,10 +28,13 @@ assert.equal(resolveDecisionId("data-directory"), "data-directory", "material da
 assert.throws(() => resolveDecisionId("unreviewed_alias"), /unknown or resolved Decision ID unreviewed_alias/);
 assert.throws(() => resolveDecisionId("target", decisionBank, ["target"]), /unknown or resolved Decision ID target/);
 assert.equal(validateEvidence({ transcript, manifest, rawFiles, derivedBytes }).status, "PASS", "immutable baseline evidence");
+assert.match(captureSource, /skillLogicalPath\s*=\s*"skills\/meta-prompt\/SKILL\.md"/, "future capture emits logical skill identity");
+assert.match(captureSource, /skillCapturePath:\s*realpathSync/, "future capture retains historical resolved path");
 
 const candidate = () => ({ transcript: structuredClone(transcript), manifest: structuredClone(manifest), rawFiles: [...rawFiles] });
 const lockFor = (c) => ({
   threadId: c.manifest.threadId,
+  skillLogicalPath: c.manifest.skillLogicalPath,
   skillSha256: c.manifest.skillSha256,
   scenarioSha256: hash(scenarioBytes),
   rawSha256: c.rawFiles.map(hash),
@@ -124,8 +128,10 @@ provenanceRejected("unrecognized raw event", (c) => { const events = rawEvents(c
   assert.throws(() => validateEvidence(c), /evidence lock provenance/, "false thread ID immutable provenance");
 }
 provenanceRejected("false model", (c) => { c.manifest.supportedModel = "gpt-fabricated"; }, /false model provenance/);
-provenanceRejected("false skill path", (c) => { c.manifest.skill = "/tmp/fabricated/SKILL.md"; }, /canonical skill path provenance/);
-provenanceRejected("false skill hash", (c) => { c.manifest.skillSha256 = "0".repeat(64); }, /loaded canonical skill provenance/);
+provenanceRejected("false skill logical path", (c) => { c.manifest.skillLogicalPath = "skills/other/SKILL.md"; }, /canonical skill logical identity/);
+provenanceRejected("historical skill capture path confusion", (c) => { c.manifest.skillCapturePath = "/tmp/not-the-canonical-name"; }, /historical skill capture path provenance/);
+provenanceRejected("symlink logical identity confusion", (c) => { c.manifest.skillLogicalPath = "tests/acceptance/../../skills/meta-prompt/SKILL.md"; }, /canonical skill logical identity/);
+provenanceRejected("coordinated manifest skill re-sign attempt", (c) => { c.manifest.skillSha256 = "0".repeat(64); }, /loaded canonical skill provenance/);
 {
   const c = candidate(); sync(c); const forged = lockFor(c); forged.scenarioSha256 = "0".repeat(64);
   assert.throws(() => validateEvidence({ ...c, lockOverride: forged }), /evidence lock provenance/, "false scenario hash");
