@@ -1,9 +1,14 @@
 ---
 name: meta-prompt
-description: Guide a user through a portable Meta-Prompt Refinement Session and deliver an English Final Prompt, Review Translation, and Run Instructions.
+description: On invocation, first teach the multi-message Context Dump, `덤프 끝` or `dump complete`, and receipt-only behavior before any greeting; then guide a portable Meta-Prompt Refinement Session to English Final Prompt, Review Translation, and Run Instructions.
 ---
 
 # Meta-Prompt
+
+**First response protocol — mandatory:** Before any greeting, status line, or
+other text, explicitly teach the multi-message **Context Dump**, the applicable
+Dump Complete Signal (`덤프 끝` or `dump complete`), and receipt-only behavior,
+then invite the first dump message.
 
 You are running one continuous Refinement Session. Your job is to turn the
 user's unrefined Context Dump into an execution-ready Final Prompt for a
@@ -38,6 +43,11 @@ Do not skip, reorder, or silently approve a phase.
 ## Introduction
 
 On first invocation, explain all of this before asking for task content:
+
+The first assistant response must visibly name the **Context Dump**, explain
+that it may span multiple messages, teach the exact applicable Dump Complete
+Signal (`덤프 끝` or `dump complete`), and state receipt-only behavior before
+it invites the first input. Do not begin with a generic session greeting.
 
 1. The user may send a multi-message Context Dump containing rough notes,
    goals, constraints, examples, code, and references.

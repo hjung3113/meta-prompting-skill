@@ -1,7 +1,7 @@
 {
-  "fresh": "/tmp/meta-13.9hDTeg/fresh-project",
+  "fresh": "/tmp/meta-protocol.zE3oUj/fresh-project",
   "nextIndex": 13,
-  "threadId": "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+  "threadId": "019f861c-3702-7280-96d9-55998b3874ce",
   "entries": [
     {
       "index": 0,
@@ -9,12 +9,12 @@
         "exec",
         "--json",
         "-C",
-        "/tmp/meta-13.9hDTeg/fresh-project",
+        "/tmp/meta-protocol.zE3oUj/fresh-project",
         "$meta-prompt"
       ],
       "status": 0,
       "raw": "turn-00.jsonl",
-      "sha256": "2400be781b9a4ea2abf0601f4f768e4105567bb477ec6bbdad609d189d20941e"
+      "sha256": "69e34f8f24f19c94dca9cd65e1197029fdfc908db582f5ad7d3bd8a9d05f1776"
     },
     {
       "index": 1,
@@ -22,12 +22,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "I need a fictional offline bookmark manager plan."
       ],
       "status": 0,
       "raw": "turn-01.jsonl",
-      "sha256": "2fc5679056c3cce4800fc6725cf616f99da9a5f50b8a0db0cc61c8bfe7abf5b3"
+      "sha256": "e698427b59d490e1d70bbb696084dd36acc2633ec4589ffb663ee886fbdf4aca"
     },
     {
       "index": 2,
@@ -35,12 +35,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "It needs add, list, remove; no cloud sync or GUI. 덤프 끝"
       ],
       "status": 0,
       "raw": "turn-02.jsonl",
-      "sha256": "4890a61213be9715c5a13a7a7b57ab53c95a51f0d1c4d64838b8479872e30cb9"
+      "sha256": "c7109f7a622de04cdb9c1fd141cf4b511131460119ec41726dd9fc445027e52c"
     },
     {
       "index": 3,
@@ -48,12 +48,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Confirm Codex as the Target Tool."
       ],
       "status": 0,
       "raw": "turn-03.jsonl",
-      "sha256": "23b8f40bc31371ca0b434e3c1f5fb8a9ff9a6509f87f123475741bc5f6dfeef0"
+      "sha256": "c90c14dee0690aa93dd4f44e1482d8463f45ac7dd5796d73187d7c7f35a6e7fc"
     },
     {
       "index": 4,
@@ -61,12 +61,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Confirm 900 English words maximum."
       ],
       "status": 0,
       "raw": "turn-04.jsonl",
-      "sha256": "f94c6749fe8f54e3d9acf81dcbcdb3d09b39ba1c5d9351d8b1aa3a62a946d8f7"
+      "sha256": "497bf545d4f9a8b28c04a0dbff5dd0646d2c502eedfac1403c47cbaa764a5deb"
     },
     {
       "index": 5,
@@ -74,12 +74,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Use Node.js with TypeScript."
       ],
       "status": 0,
       "raw": "turn-05.jsonl",
-      "sha256": "ba168aaa41c9442d4d88097a1f95a4919e859de5ffabd7111e6eda36aeaac8eb"
+      "sha256": "a960f38636f78458ae96ae1a7d2f5bf497ccf2fbe9be9df1a1305ee5e292ed53"
     },
     {
       "index": 6,
@@ -87,12 +87,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Use a Markdown plan returned only in the response."
       ],
       "status": 0,
       "raw": "turn-06.jsonl",
-      "sha256": "1e6576d3636958cf4352f1d0a37990179e41a5f001dab79c53b6c64eeb5158f1"
+      "sha256": "91e39425d27b67e070e833bce9b5d3a7bc62cc1510ba5aeb975670f0016d08db"
     },
     {
       "index": 7,
@@ -100,12 +100,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Use generated IDs, required URLs, optional title and tags."
       ],
       "status": 0,
       "raw": "turn-07.jsonl",
-      "sha256": "a4e7045f09a7e98506eeb297994f6e084ae957032b2d7ba855e28850503289dd"
+      "sha256": "fe0d9f988e798752073498840d0c8daf4dfe176950f302425041eebe4af34ed6"
     },
     {
       "index": 8,
@@ -113,12 +113,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Adopt the exact add/list/remove criterion and URL-validation plus malformed-JSON tests."
       ],
       "status": 0,
       "raw": "turn-08.jsonl",
-      "sha256": "5ae57eec8cb421b18a8e27234f60bc5b3105a5b9b11fb574215da353f8b1f55b"
+      "sha256": "7a17800138995efd14d2608ff1f1b9bf1e056df60f42a42db09817707657b259"
     },
     {
       "index": 9,
@@ -126,12 +126,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Adopt invalid URL, missing ID, malformed JSON failures; exclusions are implementation, cloud, GUI, external services; remaining assumptions none."
       ],
       "status": 0,
       "raw": "turn-09.jsonl",
-      "sha256": "991fc00decd3b8b5b57cccc61617522e55975288bb1f38e8a28b33c02da1af2f"
+      "sha256": "92a335766ddc8f3f147a91e3d2bf149e3ea014c165de915c544d0cf934d3cceb"
     },
     {
       "index": 10,
@@ -139,12 +139,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Confirm local JSON storage in a suitable user data directory."
       ],
       "status": 0,
       "raw": "turn-10.jsonl",
-      "sha256": "77ddaa00172875b8e01a58ffe7fa510596b834762b764720c9ae05d8c127a3c0"
+      "sha256": "032a81f68a36bbee47ae6b3b07d91d22c0ed31b845d33c1597a42256640b7b4b"
     },
     {
       "index": 11,
@@ -152,12 +152,12 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "Present the complete Alignment Gate now, including every mandatory field and remaining assumptions."
       ],
       "status": 0,
       "raw": "turn-11.jsonl",
-      "sha256": "c641c03a61d19dc26796b9ff00682700c842a80d796180e85db9805962800990"
+      "sha256": "e43846ac9ccb06c41deb8e12cff7572e85f399fdab7fa0559e04a0c6e00f7221"
     },
     {
       "index": 12,
@@ -165,16 +165,16 @@
         "exec",
         "resume",
         "--json",
-        "019f8611-5e84-7e02-b6b6-3d7a2a26830f",
+        "019f861c-3702-7280-96d9-55998b3874ce",
         "approve"
       ],
       "status": 0,
       "raw": "turn-12.jsonl",
-      "sha256": "60a07201441b0d26e3bce64570854bfa4680e0e7982d244b4bd17f79a9a67947"
+      "sha256": "0d7e1e665c6267abaa6986c738eefe40f874328b1831a96d3a2a77a95f3d1da4"
     }
   ],
   "skill": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
-  "skillSha256": "b33748539355c44f94f13d7708c84bfc4b5197bf19b0eafaffad62fd4abc41ef",
+  "skillSha256": "f9b39c2ede22ecc2f56740c667781d7a300a02804623d30c24a0ea431bb1bd8f",
   "hostVersion": "codex-cli 0.144.6",
   "redactions": "none; synthetic context"
 }
