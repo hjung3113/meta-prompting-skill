@@ -1,0 +1,3 @@
+# One canonical skill with tool adapters
+
+The Shared Workflow will have one canonical Agent Skill, with thin distribution manifests and deterministic validation scripts for Codex, Claude Code, and OpenCode. The primary installation path is one `skills.sh` command targeting all three tools; native plugin manifests are secondary paths for marketplace distribution and managed updates. We will not create separate agents, commands, or independently maintained workflow copies in v1: the workflow depends on continuous interaction in the main conversation, and native skills already provide the required invocation surface. Tool-specific components may be added later only when a verified capability gap cannot be handled by the shared skill or its adapter metadata.
