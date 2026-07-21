@@ -5,13 +5,12 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, realpathSync, renameSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { captureTurns as turns, supportedModel } from "./codex-smoke-scenario.mjs";
 
 const root = resolve(import.meta.dirname, "../..");
-const turns = ["$meta-prompt", "I need a fictional offline bookmark manager plan.", "It needs add, list, remove; no cloud sync or GUI. 덤프 끝", "Confirm Codex as the Target Tool.", "Confirm 900 English words maximum.", "Use Node.js with TypeScript.", "Use a Markdown plan returned only in the response.", "Use generated IDs, required URLs, optional title and tags.", "Adopt the exact add/list/remove criterion and URL-validation plus malformed-JSON tests.", "Adopt invalid URL, missing ID, malformed JSON failures; exclusions are implementation, cloud, GUI, external services; remaining assumptions none.", "Confirm local JSON storage in a suitable user data directory.", "Present the complete Alignment Gate now, including every mandatory field and remaining assumptions.", "approve"];
 const hash = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const atomic = (path, value) => { const temp = `${path}.tmp`; writeFileSync(temp, JSON.stringify(value, null, 2)); renameSync(temp, path); };
 const command = process.argv[2]; const capture = resolve(process.argv[3] ?? "");
-const supportedModel = "gpt-5.6-terra";
 if (!command || !capture) throw new Error("usage: init <capture-dir> | step <capture-dir> | finalize <capture-dir>");
 const statePath = join(capture, "checkpoint.json");
 if (command === "init") {

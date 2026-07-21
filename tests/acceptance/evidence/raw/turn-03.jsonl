@@ -1,5 +1,5 @@
-{"type":"thread.started","thread_id":"019f8623-6410-7111-b614-39ef215bfe31"}
+{"type":"thread.started","thread_id":"019f8638-67bd-7cd3-8c22-3009482e253c"}
 {"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/Library/Application Support/orca/codex-runtime-home/home/config.toml."}}
 {"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Target Tool은 **Codex**로 확정했습니다.\n\n다음은 Prompt Budget입니다. 현재 한도는 지정되지 않았습니다. 실행 지시와 검증 기준을 충분히 담되 Fresh Run에서 간결하게 유지하도록, 영어 Final Prompt는 **최대 900단어**를 권장합니다. 이는 작은 오프라인 CLI 계획에 보통 충분한 분량입니다.\n\n900단어로 확정할까요? 다른 단어 한도를 원하면 지정해 주세요."}}
-{"type":"turn.completed","usage":{"input_tokens":91797,"cached_input_tokens":84992,"output_tokens":502,"reasoning_output_tokens":112}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Target Tool을 **Codex**로 확정했습니다.\n\n이제 Prompt Budget을 정할게요. 권장안은 English Final Prompt를 **최대 1,200 English words**로 제한하는 것입니다. Codex가 Fresh Run에서 요구사항과 검증 절차를 충분히 받으면서도 실행 지시가 과도하게 길어지지 않는 실용적인 크기입니다. 이 제한은 English Final Prompt에만 적용되고 Review Translation 및 Run Instructions에는 적용되지 않습니다.\n\n이 권장안을 승인할까요, 아니면 다른 단어 수로 지정할까요?"}}
+{"type":"turn.completed","usage":{"input_tokens":92132,"cached_input_tokens":78336,"output_tokens":686,"reasoning_output_tokens":287}}
