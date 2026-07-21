@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { captureTurns } from "./codex-smoke-scenario.mjs";
 
 const evidence = resolve(import.meta.dirname, "evidence");
 const manifestPath = resolve(evidence, "manifest.json");
@@ -14,7 +13,7 @@ const turns = manifest.entries.map((entry, index) => {
   const lines = raw.toString().split("\n").filter(Boolean).map(JSON.parse);
   const assistant = lines.find((line) => line.type === "item.completed" && line.item?.type === "agent_message")?.item.text;
   if (!assistant) throw new Error(`missing assistant output: ${entry.raw}`);
-  return { index, user: index ? captureTurns[index] : null, assistant };
+  return { index, user: index ? entry.user : null, assistant };
 });
 const output = { turns };
 const target = resolve(evidence, "derived-transcript.json");

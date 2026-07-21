@@ -1,209 +1,303 @@
 {
-  "fresh": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/tests/acceptance/evidence/fresh-project",
-  "nextIndex": 13,
-  "threadId": "019f8638-67bd-7cd3-8c22-3009482e253c",
+  "fresh": "/tmp/issue2-register-capture.iWR1yd/fresh-project",
+  "nextIndex": 17,
+  "threadId": "019f86a0-bba9-7861-b165-1738800a7e39",
   "entries": [
     {
       "index": 0,
+      "user": "$meta-prompt",
       "args": [
         "exec",
         "--json",
         "--model",
         "gpt-5.6-terra",
         "-C",
-        "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/tests/acceptance/evidence/fresh-project",
+        "/tmp/issue2-register-capture.iWR1yd/fresh-project",
         "$meta-prompt"
       ],
       "status": 0,
       "raw": "turn-00.jsonl",
-      "sha256": "bb4a732eff5d1d47a098b8e4e4ff699927837a9d43bc24365e6ccdd5e92b3263"
+      "sha256": "abf03bd8e8115dde6e2fb570bb148b3692d62e3d50bf5a744102ef3dcf57a004"
     },
     {
       "index": 1,
+      "user": "I need a fictional offline bookmark manager plan.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
+        "019f86a0-bba9-7861-b165-1738800a7e39",
         "I need a fictional offline bookmark manager plan."
       ],
       "status": 0,
       "raw": "turn-01.jsonl",
-      "sha256": "66a87520d148d90605f0e8dc9cc47fdac1e950d8bd0ca42d5fa872ac64c955a2"
+      "sha256": "630688365637fb701a2f0ff7c0c15d23968f565fe4dac9574f74fe653cc581e1"
     },
     {
       "index": 2,
+      "user": "It needs add, list, remove; no cloud sync or GUI. Decision register: target=Target Tool; budget=Prompt Budget; deliverable=plan-only output; interface=CLI-only; storage=local JSON; data-directory=per-user data directory; commands=CLI syntax; schema=bookmark fields; list=list behavior; criteria=acceptance criteria; failures=failure rules; duplicates=duplicate URL policy; normalization=URL normalization. Use exactly these Decision IDs. 덤프 끝",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "It needs add, list, remove; no cloud sync or GUI. 덤프 끝"
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "It needs add, list, remove; no cloud sync or GUI. Decision register: target=Target Tool; budget=Prompt Budget; deliverable=plan-only output; interface=CLI-only; storage=local JSON; data-directory=per-user data directory; commands=CLI syntax; schema=bookmark fields; list=list behavior; criteria=acceptance criteria; failures=failure rules; duplicates=duplicate URL policy; normalization=URL normalization. Use exactly these Decision IDs. 덤프 끝"
       ],
       "status": 0,
       "raw": "turn-02.jsonl",
-      "sha256": "7c0bf11f646b53d4b9d31a289687c0c3edab207a34d30454bde9d81db9b9e5ea"
+      "sha256": "7d1ddcacf3e753f631cbcd096f0bf67869ec613749e5f6dcfdf4edc9bcdd920f"
     },
     {
       "index": 3,
+      "user": "Use Codex as the Target Tool in a Fresh Run.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Confirm Codex as the Target Tool."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use Codex as the Target Tool in a Fresh Run."
       ],
       "status": 0,
       "raw": "turn-03.jsonl",
-      "sha256": "2b290d604f963c58143b53b7dced70ffd024fba966c3407f72634f3d410c9ad9"
+      "sha256": "2245efef329eaefc01eeeba3f1954d1350cd4bcc4510eaee8035a0dcc5a3a822"
     },
     {
       "index": 4,
+      "user": "Use a maximum of 900 English words for the English Final Prompt.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Confirm 900 English words maximum."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use a maximum of 900 English words for the English Final Prompt."
       ],
       "status": 0,
       "raw": "turn-04.jsonl",
-      "sha256": "b371844e8ab9236f959087e176233bdc1de6d19178281e78bd158620128ab0ee"
+      "sha256": "8af348e2442f4d35a474b8d1faf2702a1ab14d8d253004aff7746619990b9e78"
     },
     {
       "index": 5,
+      "user": "Produce a response-only Markdown implementation plan with Node.js and TypeScript; do not create files or source code.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Use a response-only Markdown plan with Node.js and TypeScript."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Produce a response-only Markdown implementation plan with Node.js and TypeScript; do not create files or source code."
       ],
       "status": 0,
       "raw": "turn-05.jsonl",
-      "sha256": "e2d06cdc01031a5ebb971e9b2800713be2a84e708b65dafc0eaf47426d59b70f"
+      "sha256": "7d1c9784d7f392016745bf42830b1e510e832ea510671762af0c8aa04dd2d0d2"
     },
     {
       "index": 6,
+      "user": "Use a CLI only; no GUI.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Use one local JSON file in a suitable user data directory."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use a CLI only; no GUI."
       ],
       "status": 0,
       "raw": "turn-06.jsonl",
-      "sha256": "d9620998f379008b3c41d310ad1a9a7bb6cb9b524d59ce281838067654a5e1a4"
+      "sha256": "8a3a26fa4c33b961795c93b09092a257a1c43dc97615ca5466eeaaa369fd8d2a"
     },
     {
       "index": 7,
+      "user": "Use one local JSON file in a suitable per-user data directory.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Use generated IDs, required URLs, optional title and tags."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use one local JSON file in a suitable per-user data directory."
       ],
       "status": 0,
       "raw": "turn-07.jsonl",
-      "sha256": "79c5f950ae54c1f5a1bfd35c2f2278a19bda128ac81ed5ae0780f9211dce3806"
+      "sha256": "aaf80080d2c2b4415ae11c34dbaac6dea8e1646afec3226cf60eb3a7cbac17f3"
     },
     {
       "index": 8,
+      "user": "Use an OS-appropriate per-user application-data directory: XDG data home on Linux, Application Support on macOS, and LocalAppData on Windows, with the JSON file under a bookmarks application folder.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Adopt exact add/list/remove criteria plus URL validation and malformed JSON tests."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use an OS-appropriate per-user application-data directory: XDG data home on Linux, Application Support on macOS, and LocalAppData on Windows, with the JSON file under a bookmarks application folder."
       ],
       "status": 0,
       "raw": "turn-08.jsonl",
-      "sha256": "b63e7803dae5501d4940eb28c9b310900233ddb6a58c1871c016941bd0dc03c5"
+      "sha256": "d780fd9982c22cf2472e33a7380c36e6779e726b49874fd06f1d1cbcaae4e299"
     },
     {
       "index": 9,
+      "user": "Use exactly `bookmarks add <url> [--title <title>] [--tag <tag>...]`, `bookmarks list`, and `bookmarks remove <id>`.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Adopt invalid URL, missing ID, malformed JSON failures; exclude implementation, cloud, GUI, and external services."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use exactly `bookmarks add <url> [--title <title>] [--tag <tag>...]`, `bookmarks list`, and `bookmarks remove <id>`."
       ],
       "status": 0,
       "raw": "turn-09.jsonl",
-      "sha256": "a4a4de850fefd8fb9b3bbf27e06139a3c62bd6ec54a4f5fe84cb96fcb6ee2c40"
+      "sha256": "f73df3fee4ea6a60ede8e38700ef696025384a9f3af941673ac3dd8aba411c03"
     },
     {
       "index": 10,
+      "user": "Use generated stable IDs, required URLs, optional title and tags, and a creation timestamp; remove only by ID.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Use ID-based removal only."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Use generated stable IDs, required URLs, optional title and tags, and a creation timestamp; remove only by ID."
       ],
       "status": 0,
       "raw": "turn-10.jsonl",
-      "sha256": "950796e3a554602da6a74906dd7aaa6b88b953eda3d5db325857a6d8eac12e52"
+      "sha256": "5729c780537d21c5ccaa22453dc06b2a7aff3fa457ac7358bdb71f474b3ca0df"
     },
     {
       "index": 11,
+      "user": "List every bookmark in stable creation order, with no search, tag filter, or sort options, in a human-readable table with ID, URL, title, and tags.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "Present the complete Alignment Gate now; all material decisions are resolved."
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "List every bookmark in stable creation order, with no search, tag filter, or sort options, in a human-readable table with ID, URL, title, and tags."
       ],
       "status": 0,
       "raw": "turn-11.jsonl",
-      "sha256": "9b0482c6c5b1c995636cbf7e34060a48cb9306497824718804a6f508c09029f0"
+      "sha256": "9e2bbdff1fbf22a267b4824a2ea1f92d2118c49640a8a59c08987c2aabe2c746"
     },
     {
       "index": 12,
+      "user": "Adopt exact add/list/remove criteria plus URL validation and malformed JSON tests.",
       "args": [
         "exec",
         "resume",
         "--json",
         "--model",
         "gpt-5.6-terra",
-        "019f8638-67bd-7cd3-8c22-3009482e253c",
-        "approve"
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Adopt exact add/list/remove criteria plus URL validation and malformed JSON tests."
       ],
       "status": 0,
       "raw": "turn-12.jsonl",
-      "sha256": "d8e4de01daacfcc036570f55b1a07e3447262575e2a1bc10609a3918f9df0077"
+      "sha256": "7f86f2902dae4ee19f3fbd693a1308bb6a6df3fb075be0221deed6d12ce1a466"
+    },
+    {
+      "index": 13,
+      "user": "Adopt invalid URL, missing ID, malformed JSON failures; exclude implementation, cloud, GUI, and external services.",
+      "args": [
+        "exec",
+        "resume",
+        "--json",
+        "--model",
+        "gpt-5.6-terra",
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Adopt invalid URL, missing ID, malformed JSON failures; exclude implementation, cloud, GUI, and external services."
+      ],
+      "status": 0,
+      "raw": "turn-13.jsonl",
+      "sha256": "b977510d84b368fa54d9dee42355be82594ccee4567190afb2b3295f8e00be41"
+    },
+    {
+      "index": 14,
+      "user": "Reject duplicate URLs; adding an existing normalized URL must fail without changing the JSON file.",
+      "args": [
+        "exec",
+        "resume",
+        "--json",
+        "--model",
+        "gpt-5.6-terra",
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Reject duplicate URLs; adding an existing normalized URL must fail without changing the JSON file."
+      ],
+      "status": 0,
+      "raw": "turn-14.jsonl",
+      "sha256": "86501a098c35919ab12026d221bbec7df75bbe3ae13de417a027cf8fe64b19cb"
+    },
+    {
+      "index": 15,
+      "user": "Parse every URL with the standard URL implementation and store and compare its canonical serialized URL; duplicate rejection uses that canonical form.",
+      "args": [
+        "exec",
+        "resume",
+        "--json",
+        "--model",
+        "gpt-5.6-terra",
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "Parse every URL with the standard URL implementation and store and compare its canonical serialized URL; duplicate rejection uses that canonical form."
+      ],
+      "status": 0,
+      "raw": "turn-15.jsonl",
+      "sha256": "339e0d89cb53c07e43346b774ddc64d39d5b7d4eca6df776a2087a2529e8a206"
+    },
+    {
+      "index": 16,
+      "user": "approve",
+      "args": [
+        "exec",
+        "resume",
+        "--json",
+        "--model",
+        "gpt-5.6-terra",
+        "019f86a0-bba9-7861-b165-1738800a7e39",
+        "approve"
+      ],
+      "status": 0,
+      "raw": "turn-16.jsonl",
+      "sha256": "6d19be892e030154fdbbb8d042d20517dc9ff2d81bc86c2e0b74299ced05ccc5"
     }
   ],
+  "pending": null,
+  "resolved": [
+    "target",
+    "budget",
+    "deliverable",
+    "interface",
+    "storage",
+    "data-directory",
+    "commands",
+    "schema",
+    "list",
+    "criteria",
+    "failures",
+    "duplicates",
+    "normalization"
+  ],
+  "phase": "complete",
   "skill": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
-  "skillSha256": "f9b39c2ede22ecc2f56740c667781d7a300a02804623d30c24a0ea431bb1bd8f",
+  "skillSha256": "971a1271474da20ed12d1ef1b1dd240318c3bc596c187de7c1600cf11ff1c66d",
   "supportedModel": "gpt-5.6-terra",
-  "captureUtc": "2026-07-21T19:47:50.378Z",
+  "captureUtc": "2026-07-21T21:41:41.339Z",
   "hostVersion": "codex-cli 0.144.6",
   "redactions": "none; synthetic context",
-  "derivedSha256": "adc3066d1fa3c4ee5b6dd8ba61ae8285de669aeda42f8cb90087c3e891021d1f"
+  "derivedSha256": "9fc4ef636c930626c319f021b9107cc5f75cbdfd8dcc7580911d7bc231f91956"
 }

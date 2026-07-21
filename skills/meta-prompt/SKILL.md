@@ -133,6 +133,35 @@ Adapt the next question to the previous answer. The loop must resolve, as
 applicable, the goal and actor, deliverable, scope, exclusions, constraints,
 failure conditions, edge cases, Target Tool, and Prompt Budget.
 
+For every Target Tool, Prompt Budget, and substantive clarification turn, emit
+this exact observable block (natural-language content may remain in the
+user's language):
+
+```text
+Decision ID: <stable session-local identifier>
+Recommendation: <nonempty recommendation and reason>
+User Decision Request: <one nonempty question>
+```
+
+`Decision ID` must match `[a-z][a-z0-9_-]*`, identify exactly one currently
+unresolved decision in the session's decision register, and never repeat an
+already resolved identifier. Emit each label exactly once, in the order shown,
+and do not place another decision request outside the block. This grammar
+makes the one-decision contract observable; it does not replace natural-
+language explanation or the requirement to recommend.
+
+When the Context Dump supplies a decision register with stable IDs, preserve
+and reuse those exact IDs. Otherwise create one stable session-local ID when a
+decision is first registered and reuse it for that decision; never infer or
+rename an ID from prose after registration.
+
+Maintain an internal decision ledger with `unresolved` and `resolved` IDs.
+Before emitting every clarification block, select exactly one ID from
+`unresolved`, verify it is not in `resolved`, and then move it to `resolved`
+only after the user's answer has been recorded. Never ask a resolved ID again;
+when the register is exhausted, emit the Alignment Gate rather than another
+clarification block.
+
 Turn vague quality goals into observable Acceptance Criteria. At least one
 criterion is mandatory. If the user cannot define success, propose measurable
 candidates one at a time and ask which one to adopt or how to change it. A
@@ -152,6 +181,24 @@ in the user's language. It must include:
 - Acceptance Criteria and verification evidence;
 - failure conditions and edge cases; and
 - remaining assumptions.
+
+Emit the Alignment Gate as exactly these eight ordered top-level labels, once
+each, with a nonempty value after every colon and no other top-level Alignment
+field:
+
+```text
+Goal and actor: <value>
+Deliverable and inputs: <value>
+In scope: <value>
+Exclusions: <value>
+Constraints: <value>
+Acceptance Criteria and evidence: <value>
+Failure conditions and edge cases: <value>
+Remaining assumptions: <value>
+```
+
+Put one explicit approval request after this block. Do not split, rename,
+reorder, duplicate, or add top-level Alignment fields.
 
 Ask for explicit approval using an unambiguous response such as "approve" or
 the equivalent in the user's language. Do not interpret silence, a new dump,

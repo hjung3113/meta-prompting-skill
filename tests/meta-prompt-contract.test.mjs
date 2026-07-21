@@ -5,11 +5,16 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateStaticSkillContract } from "./acceptance/validate-static-contract.mjs";
 import { validateEvidence } from "./acceptance/validate-codex-smoke.mjs";
+import { decisionBank, resolveDecisionId } from "./acceptance/codex-smoke-scenario.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), ".."); const e = resolve(root, "tests/acceptance/evidence");
 const [skill, scenarioText, manifestText, derivedBytes] = await Promise.all([readFile(resolve(root,"skills/meta-prompt/SKILL.md"),"utf8"),readFile(resolve(root,"tests/acceptance/happy-path.json"),"utf8"),readFile(resolve(e,"manifest.json"),"utf8"),readFile(resolve(e,"derived-transcript.json"))]);
 const manifest=JSON.parse(manifestText), transcript=JSON.parse(derivedBytes), rawFiles=await Promise.all(manifest.entries.map((x)=>readFile(resolve(e,"raw",x.raw))));
 assert.equal(validateStaticSkillContract({skill,scenario:JSON.parse(scenarioText)}).status,"PASS");
+assert.equal(resolveDecisionId("target"), "target", "registered ID preserved");
+assert.equal(resolveDecisionId("data-directory"), "data-directory", "material data-directory decision registered");
+assert.throws(() => resolveDecisionId("unreviewed_alias"), /unknown or resolved Decision ID unreviewed_alias/);
+assert.throws(() => resolveDecisionId("target", decisionBank, ["target"]), /unknown or resolved Decision ID target/);
 assert.equal(validateEvidence({transcript,manifest,rawFiles,derivedBytes}).status,"PASS");
 const hash=(v)=>createHash("sha256").update(v).digest("hex");
 const rejected=(name, change, expected)=>{const c={transcript:structuredClone(transcript),manifest:structuredClone(manifest),rawFiles:[...rawFiles]};change(c);c.derivedBytes=Buffer.from(`${JSON.stringify(c.transcript,null,2)}\n`);c.manifest.derivedSha256=hash(c.derivedBytes);assert.throws(()=>validateEvidence(c),expected,name);};
