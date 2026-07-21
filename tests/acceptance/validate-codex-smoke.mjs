@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bootstrapTurns, decisionBank, supportedModel } from "./codex-smoke-scenario.mjs";
+import { parseAlignmentGate } from "./alignment-gate.mjs";
 
 const directory = dirname(fileURLToPath(import.meta.url));
 const sha = (value) => createHash("sha256").update(value).digest("hex");
@@ -58,18 +59,20 @@ const validateSemanticContract = (t) => {
   const decisions = t.map((turn) => ({ turn, id: turn.assistant.match(/(?:^|\n)Decision ID:\s*([a-z][a-z0-9_-]*)/i)?.[1] })).filter((item) => item.id);
   assert.deepEqual(decisions.map((item) => item.id).sort(), Object.keys(decisionBank).sort(), "exact decision register coverage");
   for (const { turn, id } of decisions) {
-    assert.match(turn.assistant, /Recommendation:\s*\S/i, `clarification recommendation ${id}`);
-    assert.match(turn.assistant, /User Decision Request:\s*\S/i, `clarification request ${id}`);
+    assert.match(turn.assistant, /^Recommendation:[ \t]*\S.*$/im, `clarification recommendation ${id}`);
+    assert.match(turn.assistant, /^User Decision Request:[ \t]*\S.*$/im, `clarification request ${id}`);
+    assert.equal((turn.assistant.match(/\?/g) ?? []).length, 1, `exactly one decision question ${id}`);
   }
   const gateIndex = t.findIndex((turn) => /Goal and actor:/.test(turn.assistant) && /Remaining assumptions:/.test(turn.assistant)); assert.ok(gateIndex > 2, "Alignment Gate"); const gate = t[gateIndex].assistant;
+  parseAlignmentGate(gate);
   for (const [label, expected] of Object.entries(expectedFields)) assert.match(labeled(gate, label), expected, `approved Alignment state: ${label}`);
   assert.doesNotMatch(gate, /\b(?:TBD|unresolved|needs decision|still needs)\b|\?/i, "gate has unresolved decision");
   assert.match(gate, /(?:reply\s+)?`?approve`?.*(?:authorize|승인)|approve.*(?:authorize|승인)/i, "approval semantics"); assert.doesNotMatch(gate, /approve\s+means\s+reject/i, "approval semantics");
   assert.match(t[gateIndex + 1].user, /^approve$/i, "exact approval command");
   for (const turn of t.slice(0, gateIndex + 1)) assert.doesNotMatch(turn.assistant, /^(?:#{1,6}\s+|\*\*)English Final Prompt/m, "premature final");
   const delivery = t[gateIndex + 1].assistant, english = section(delivery, labels[0]), korean = section(delivery, labels[1]), run = section(delivery, labels[2]);
-  assert.ok(delivery.indexOf(labels[0]) < delivery.indexOf(labels[1]) && delivery.indexOf(labels[1]) < delivery.indexOf(labels[2]));
-  for (const phrase of [/offline bookmark manager/i, /remove <id>/i, /canonical URL.*already exists|duplicate.*fail/i, /one local JSON file/i, /CLI only|no GUI/i, /offline.*cloud|Do not include cloud/i, /malformed JSON/i, /(?=[\s\S]*XDG data home)(?=[\s\S]*Application Support)(?=[\s\S]*LocalAppData)/i]) assert.match(english, phrase, "approved state lost in English Final Prompt");
+  assert.ok(delivery.indexOf(labels[0]) < delivery.indexOf(labels[1]) && delivery.indexOf(labels[1]) < delivery.indexOf(labels[2]), "delivery section order");
+  for (const phrase of [/offline bookmark manager/i, /remove <id>/i, /canonical URL.*already exists/i, /one local JSON file/i, /CLI only|no GUI/i, /offline.*cloud|Do not include cloud/i, /malformed JSON/i, /(?=[\s\S]*XDG data home)(?=[\s\S]*Application Support)(?=[\s\S]*LocalAppData)/i]) assert.match(english, phrase, "approved state lost in English Final Prompt");
   assert.ok((korean.match(/[가-힣]/g) ?? []).length >= 30, "Review Translation must be substantive Korean"); assert.match(korean, /ID.*(?:삭제|제거)|ID 기반/i, "Korean approved state");
   assert.match(run, /Fresh Run/i); assert.match(run, /only the English Final Prompt|English Final Prompt(?:\*\*)?만/i); assert.match(run, /900 English words/i); assert.match(run, /Quality Gate.*(?:passed|통과)/i); assert.match(run, /canonical-URL duplicate|duplicate URL/i); return { delivery };
 };
