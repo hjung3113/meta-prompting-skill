@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"019f85e1-49da-7d92-b9ff-efd484613985"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/Library/Application Support/orca/codex-runtime-home/home/config.toml."}}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"받았습니다. 계속 보내시거나, 완료되면 `덤프 끝`이라고 알려주세요."}}
+{"type":"turn.completed","usage":{"input_tokens":71577,"cached_input_tokens":56576,"output_tokens":419,"reasoning_output_tokens":86}}
