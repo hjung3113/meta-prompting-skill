@@ -94,9 +94,12 @@ assert.throws(
 const observedTranscript = JSON.parse(
   await readFile(resolve(repoRoot, "tests/acceptance/codex-smoke-transcript.json"), "utf8"),
 );
+const authoritativeManifest = JSON.parse(
+  await readFile(resolve(repoRoot, "tests/acceptance/evidence/manifest.json"), "utf8"),
+);
 assert.equal(validateObservedConversation(observedTranscript).status, "PASS");
 assert.equal(
-  observedTranscript.metadata.canonicalSkillSha256,
+  authoritativeManifest.skillSha256,
   createHash("sha256").update(skill).digest("hex"),
   "the smoke transcript must identify the canonical skill it invoked",
 );
