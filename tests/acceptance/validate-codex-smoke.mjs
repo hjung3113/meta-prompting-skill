@@ -12,6 +12,8 @@ const sha = (value) => createHash("sha256").update(value).digest("hex");
 const labels = ["English Final Prompt", "Review Translation", "Run Instructions"];
 const section = (text, label) => {
   const heads = [...text.matchAll(/^(?:#{1,6}\s+|\*\*)(English Final Prompt|Review Translation|Run Instructions)(?:\*\*)?\s*$/gim)];
+  assert.equal(heads.length, labels.length, "exactly three delivery sections");
+  assert.deepEqual(heads.map((head) => head[1]), labels, "delivery section labels and order");
   const index = heads.findIndex((h) => h[1] === label); assert.notEqual(index, -1, `missing exact ${label}`);
   const body = text.slice(heads[index].index + heads[index][0].length, heads[index + 1]?.index ?? text.length);
   assert.ok(body.replace(/[\s`]/g, ""), `${label} is empty`); return body;
@@ -33,19 +35,20 @@ const expectedFields = {
 const fail = (message) => { throw new assert.AssertionError({ message }); };
 const rawAssistant = (raw, thread, name) => {
   const events = raw.toString().split("\n").filter(Boolean).map(JSON.parse);
-  assert.ok(events.length >= 5, `raw event grammar ${name}`);
+  assert.equal(events.length, 5, `raw event grammar ${name}`);
   assert.deepEqual(events.slice(0, 3).map((event) => event.type), ["thread.started", "item.completed", "turn.started"], `raw event grammar ${name}`);
   assert.equal(events.at(-1).type, "turn.completed", `raw terminal event ${name}`);
   assert.equal(events.at(-1).status, undefined, `raw terminal status ${name}`);
   assert.equal(events.filter((event) => event.type === "thread.started").length, 1, `exactly one thread.started ${name}`);
   assert.equal(events[0].thread_id, thread, `raw thread ${name}`);
   assert.equal(events[1].item?.type, "error", `expected documented host warning ${name}`);
+  assert.deepEqual(Object.keys(events[1].item).sort(), ["id", "message", "type"], `host warning item grammar ${name}`);
   assert.match(events[1].item?.message ?? "", /Under-development features enabled: chronicle/, `unexpected non-agent event ${name}`);
-  for (const event of events.slice(3, -1)) assert.equal(event.type, "item.completed", `unknown raw event ${name}`);
-  const agentEvents = events.slice(3, -1).filter((event) => event.item?.type === "agent_message");
-  assert.ok(agentEvents.every((event) => typeof event.item.text === "string"), `agent message text ${name}`);
-  const messages = agentEvents.map((event) => event.item.text).filter((text) => text.trim());
-  assert.equal(messages.length, 1, `exactly one nonempty assistant message ${name}`); return messages[0];
+  const agent = events[3]; assert.equal(agent.type, "item.completed", `unknown raw event ${name}`);
+  assert.equal(agent.item?.type, "agent_message", `agent item grammar ${name}`);
+  assert.deepEqual(Object.keys(agent.item).sort(), ["id", "text", "type"], `agent item grammar ${name}`);
+  assert.equal(typeof agent.item.text, "string", `agent message text ${name}`);
+  assert.ok(agent.item.text.trim(), `exactly one nonempty assistant message ${name}`); return agent.item.text;
 };
 const labeled = (text, label) => {
   const match = text.match(new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?\\*{0,2}${label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")}\\*{0,2}\\s*:\\s*(.+)`, "i"));
@@ -57,11 +60,13 @@ const validateSemanticContract = (t) => {
   assert.match(t[1].assistant, /(?:계속 보내시거나|continue|덤프 끝|dump complete)/i, "pre-signal receipt grammar");
   assert.doesNotMatch(t[1].assistant, /requirements|architecture|inspect|select|plan|bookmark|decision/i, "pre-signal receipt grammar");
   assert.match(t[2].user, /덤프 끝|dump complete/i);
-  const decisions = t.map((turn) => ({ turn, id: turn.assistant.match(/(?:^|\n)Decision ID:\s*([a-z][a-z0-9_-]*)/i)?.[1] })).filter((item) => item.id);
+  const decisions = t.map((turn) => ({ turn, id: turn.assistant.match(/(?:^|\n)Decision ID:\s*([a-z][a-z0-9_-]*)$/im)?.[1] })).filter((item) => item.id);
   assert.deepEqual(decisions.map((item) => item.id).sort(), Object.keys(decisionBank).sort(), "exact decision register coverage");
   for (const { turn, id } of decisions) {
-    assert.match(turn.assistant, /^Recommendation:[ \t]*\S.*$/im, `clarification recommendation ${id}`);
-    assert.match(turn.assistant, /^User Decision Request:[ \t]*\S.*$/im, `clarification request ${id}`);
+    const labels = ["Decision ID", "Recommendation", "User Decision Request"];
+    for (const label of labels) assert.equal((turn.assistant.match(new RegExp(`^${label}:`, "gim")) ?? []).length, 1, `clarification ${label} exactly once ${id}`);
+    const block = turn.assistant.match(/^Decision ID:\s*([a-z][a-z0-9_-]*)\nRecommendation:[ \t]*(\S[^\n]*)\nUser Decision Request:[ \t]*(\S[^\n]*)$/im);
+    assert.ok(block, `structured clarification grammar ${id}`);
     assert.equal((turn.assistant.match(/\?/g) ?? []).length, 1, `exactly one decision question ${id}`);
   }
   const gateIndex = t.findIndex((turn) => /Goal and actor:/.test(turn.assistant) && /Remaining assumptions:/.test(turn.assistant)); assert.ok(gateIndex > 2, "Alignment Gate"); const gate = t[gateIndex].assistant;
@@ -74,10 +79,11 @@ const validateSemanticContract = (t) => {
   const delivery = t[gateIndex + 1].assistant, english = section(delivery, labels[0]), korean = section(delivery, labels[1]), run = section(delivery, labels[2]);
   assert.ok(delivery.indexOf(labels[0]) < delivery.indexOf(labels[1]) && delivery.indexOf(labels[1]) < delivery.indexOf(labels[2]), "delivery section order");
   for (const phrase of [/offline bookmark manager/i, /remove <id>/i, /canonical URL.*already exists/i, /one local JSON file/i, /CLI only|no GUI/i, /offline.*cloud|Do not include cloud/i, /malformed JSON/i, /(?=[\s\S]*XDG data home)(?=[\s\S]*Application Support)(?=[\s\S]*LocalAppData)/i]) assert.match(english, phrase, "approved state lost in English Final Prompt");
+  assert.ok((english.match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g) ?? []).length <= 900, "English Final Prompt exceeds approved 900-word budget");
   assert.ok((korean.match(/[가-힣]/g) ?? []).length >= 30, "Review Translation must be substantive Korean"); assert.match(korean, /ID.*(?:삭제|제거)|ID 기반/i, "Korean approved state");
   assert.match(run, /Fresh Run/i); assert.match(run, /only the English Final Prompt|English Final Prompt(?:\*\*)?만/i); assert.match(run, /900 English words/i); assert.match(run, /Quality Gate.*(?:passed|통과)/i); assert.match(run, /canonical-URL duplicate|duplicate URL/i); return { delivery };
 };
-export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes, lockOverride }) {
+const validateEvidenceAgainstLock = ({ transcript, manifest, rawFiles, derivedBytes }, lock) => {
   assert.equal(manifest.entries.length, manifest.nextIndex); assert.equal(manifest.nextIndex, transcript.turns.length);
   assert.equal(manifest.supportedModel, supportedModel, "false model provenance");
   assert.match(manifest.captureUtc, /^20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/, "UTC capture timestamp");
@@ -98,8 +104,9 @@ export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes,
     assert.deepEqual(transcript.turns[i], { index: i, user: i ? user : null, assistant }, `derived binding ${i}`);
   }
   const t = transcript.turns; validateSemanticContract(t);
-  const lock = lockOverride ?? JSON.parse(readFileSync(lockPath, "utf8"));
-  assert.deepEqual({ threadId: manifest.threadId, skillLogicalPath: canonicalSkillLogicalPath, skillSha256: sha(readFileSync(canonicalSkill)), scenarioSha256: sha(readFileSync(scenarioPath)), rawSha256: rawFiles.map((raw) => sha(raw)), derivedSha256: sha(derivedBytes) }, lock, "evidence lock provenance");
+  assert.deepEqual({ threadId: manifest.threadId, captureUtc: manifest.captureUtc, fresh: manifest.fresh, skillLogicalPath: canonicalSkillLogicalPath, skillCapturePath: manifest.skillCapturePath, skillSha256: sha(readFileSync(canonicalSkill)), scenarioSha256: sha(readFileSync(scenarioPath)), rawSha256: rawFiles.map((raw) => sha(raw)), derivedSha256: sha(derivedBytes) }, lock, "evidence lock provenance");
   return { status: "PASS", observedTurnCount: t.length };
-}
+};
+export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes }) { return validateEvidenceAgainstLock({ transcript, manifest, rawFiles, derivedBytes }, JSON.parse(readFileSync(lockPath, "utf8"))); }
+export function validateEvidenceForTestOnly({ transcript, manifest, rawFiles, derivedBytes, testLock }) { assert.ok(testLock, "test lock required"); return validateEvidenceAgainstLock({ transcript, manifest, rawFiles, derivedBytes }, testLock); }
 if (process.argv[1] === fileURLToPath(import.meta.url)) { const e=resolve(directory,"evidence"), m=JSON.parse(await readFile(resolve(e,"manifest.json"))), b=await readFile(resolve(e,"derived-transcript.json")); const x=JSON.parse(b); const r=await Promise.all(m.entries.map((v)=>readFile(resolve(e,"raw",v.raw)))); console.log(`observed Codex smoke transcript: ${validateEvidence({transcript:x,manifest:m,rawFiles:r,derivedBytes:b}).status} (${x.turns.length} turns)`); }

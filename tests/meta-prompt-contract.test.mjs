@@ -5,6 +5,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateStaticSkillContract } from "./acceptance/validate-static-contract.mjs";
 import { validateEvidence } from "./acceptance/validate-codex-smoke.mjs";
+import { validateEvidenceCandidateForTest } from "./acceptance/test-evidence-helper.mjs";
 import { decisionBank, resolveDecisionId } from "./acceptance/codex-smoke-scenario.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -34,7 +35,10 @@ assert.match(captureSource, /skillCapturePath:\s*realpathSync/, "future capture 
 const candidate = () => ({ transcript: structuredClone(transcript), manifest: structuredClone(manifest), rawFiles: [...rawFiles] });
 const lockFor = (c) => ({
   threadId: c.manifest.threadId,
+  captureUtc: c.manifest.captureUtc,
+  fresh: c.manifest.fresh,
   skillLogicalPath: c.manifest.skillLogicalPath,
+  skillCapturePath: c.manifest.skillCapturePath,
   skillSha256: c.manifest.skillSha256,
   scenarioSha256: hash(scenarioBytes),
   rawSha256: c.rawFiles.map(hash),
@@ -66,7 +70,7 @@ const setUser = (c, index, user) => {
 };
 const semanticRejected = (name, change, expected) => {
   const c = candidate(); change(c); sync(c);
-  assert.throws(() => validateEvidence({ ...c, lockOverride: lockFor(c) }), (error) => {
+  assert.throws(() => validateEvidenceCandidateForTest({ ...c, lock: lockFor(c) }), (error) => {
     assert.match(error.message, expected, name);
     assert.doesNotMatch(error.message, /derived binding/i, name);
     return true;
@@ -74,7 +78,7 @@ const semanticRejected = (name, change, expected) => {
 };
 const provenanceRejected = (name, change, expected, { immutable = false } = {}) => {
   const c = candidate(); change(c); sync(c);
-  assert.throws(() => validateEvidence({ ...c, ...(immutable ? {} : { lockOverride: lockFor(c) }) }), (error) => {
+  assert.throws(() => (immutable ? validateEvidence(c) : validateEvidenceCandidateForTest({ ...c, lock: lockFor(c) })), (error) => {
     assert.match(error.message, expected, name);
     return true;
   });
@@ -83,19 +87,21 @@ const removeLine = (text, label) => text.replace(new RegExp(`^.*${label.replace(
 const replaceLine = (text, label, replacement) => text.replace(new RegExp(`^.*${label.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}.*$`, "m"), replacement);
 const delivery = (c, edit) => mutateAssistant(c, deliveryIndex(c), edit);
 
-semanticRejected("clarification missing Recommendation", (c) => mutateAssistant(c, assistantIndex(c, "target"), (text) => text.replace(/Recommendation:[^\n]*/, "Recommendation:")), /clarification recommendation target/);
-semanticRejected("clarification missing User Decision Request", (c) => mutateAssistant(c, assistantIndex(c, "budget"), (text) => text.replace(/User Decision Request:[^\n]*/, "User Decision Request:")), /clarification request budget/);
+semanticRejected("clarification missing Recommendation", (c) => mutateAssistant(c, assistantIndex(c, "target"), (text) => text.replace(/Recommendation:[^\n]*/, "Recommendation:")), /structured clarification grammar target/);
+semanticRejected("clarification missing User Decision Request", (c) => mutateAssistant(c, assistantIndex(c, "budget"), (text) => text.replace(/User Decision Request:[^\n]*/, "User Decision Request:")), /structured clarification grammar budget/);
 semanticRejected("duplicate Decision ID blocks", (c) => mutateAssistant(c, assistantIndex(c, "budget"), (text) => text.replace("Decision ID: budget", "Decision ID: target")), /exact decision register coverage/);
 semanticRejected("multiple decision questions", (c) => mutateAssistant(c, assistantIndex(c, "deliverable"), (text) => `${text} Should the plan also include implementation?`), /exactly one decision question deliverable/);
 semanticRejected("unknown Decision ID", (c) => mutateAssistant(c, assistantIndex(c, "interface"), (text) => text.replace("Decision ID: interface", "Decision ID: unknown")), /exact decision register coverage/);
 semanticRejected("repeated resolved Decision ID", (c) => mutateAssistant(c, assistantIndex(c, "storage"), (text) => text.replace("Decision ID: storage", "Decision ID: target")), /exact decision register coverage/);
 semanticRejected("decision register coverage missing", (c) => mutateAssistant(c, assistantIndex(c, "normalization"), (text) => text.replace("Decision ID: normalization", "Decision: normalization")), /exact decision register coverage/);
+semanticRejected("duplicate Recommendation label", (c) => mutateAssistant(c, assistantIndex(c, "target"), (text) => text.replace("User Decision Request:", "Recommendation: duplicate\nUser Decision Request:")), /clarification Recommendation exactly once target/);
 
 semanticRejected("Alignment missing field", (c) => mutateAssistant(c, gateIndex(c), (text) => removeLine(text, "Constraints:")), /Alignment Gate field count/);
 semanticRejected("Alignment extra field", (c) => mutateAssistant(c, gateIndex(c), (text) => text.replace("Remaining assumptions:", "Extra field: prohibited\nRemaining assumptions:")), /Alignment Gate field count/);
 semanticRejected("Alignment reordered fields", (c) => mutateAssistant(c, gateIndex(c), (text) => text.replace("Goal and actor:", "TEMP:").replace("Constraints:", "Goal and actor:").replace("TEMP:", "Constraints:")), /Alignment Gate field order or duplicate/);
 semanticRejected("Alignment empty field", (c) => mutateAssistant(c, gateIndex(c), (text) => replaceLine(text, "Constraints:", "Constraints:")), /Alignment Gate empty field/);
 semanticRejected("Alignment unresolved decision", (c) => mutateAssistant(c, gateIndex(c), (text) => replaceLine(text, "Remaining assumptions:", "Remaining assumptions: Stable IDs are generated; TBD decide storage later")), /gate has unresolved decision/);
+semanticRejected("bulleted non-top-level Alignment field", (c) => mutateAssistant(c, gateIndex(c), (text) => text.replace(/^Goal and actor:/m, "- Goal and actor:")), /Alignment Gate non-top-level field/);
 semanticRejected("approval semantics inverted", (c) => mutateAssistant(c, gateIndex(c), (text) => `${text}\nReply approve means reject this gate.`), /approval semantics/);
 semanticRejected("exact approve command drift", (c) => setUser(c, deliveryIndex(c), "yes approve"), /exact approval command/);
 
@@ -106,9 +112,9 @@ semanticRejected("approved local JSON lost", (c) => delivery(c, (text) => text.r
 semanticRejected("approved CLI-only no-cloud-GUI lost", (c) => delivery(c, (text) => text.replace(/CLI only; no GUI/i, "cloud GUI dashboard")), /approved state lost/);
 
 for (const label of ["English Final Prompt", "Review Translation", "Run Instructions"]) {
-  semanticRejected(`delivery missing ${label}`, (c) => delivery(c, (text) => text.replace(new RegExp(`(?:^|\\n)\\*\\*${label.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\*\\*[\\s\\S]*?(?=\\n\\*\\*(?:English Final Prompt|Review Translation|Run Instructions)\\*\\*|$)`, "m"), "")), new RegExp(`missing exact ${label}`));
+  semanticRejected(`delivery missing ${label}`, (c) => delivery(c, (text) => text.replace(new RegExp(`(?:^|\\n)\\*\\*${label.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\*\\*[\\s\\S]*?(?=\\n\\*\\*(?:English Final Prompt|Review Translation|Run Instructions)\\*\\*|$)`, "m"), "")), new RegExp(`exactly three delivery sections|missing exact ${label}`));
 }
-semanticRejected("delivery reordered sections", (c) => delivery(c, (text) => text.replace("**English Final Prompt**", "**TEMP**").replace("**Review Translation**", "**English Final Prompt**").replace("**TEMP**", "**Review Translation**")), /delivery section order/);
+semanticRejected("delivery reordered sections", (c) => delivery(c, (text) => text.replace("**English Final Prompt**", "**TEMP**").replace("**Review Translation**", "**English Final Prompt**").replace("**TEMP**", "**Review Translation**")), /delivery section labels and order/);
 semanticRejected("delivery empty English", (c) => delivery(c, (text) => text.replace(/(\*\*English Final Prompt\*\*)[\s\S]*?(?=\*\*Review Translation\*\*)/, "$1\n\n")), /English Final Prompt is empty/);
 semanticRejected("delivery non-substantive Korean", (c) => delivery(c, (text) => text.replace(/(\*\*Review Translation\*\*)[\s\S]*?(?=\*\*Run Instructions\*\*)/, "$1\nID\n")), /Review Translation must be substantive Korean/);
 semanticRejected("cloud GUI keyword-bait Quality Gate", (c) => delivery(c, () => "**English Final Prompt**\nBuild a cloud GUI. Quality Gate: passed.\n**Review Translation**\nID 기반 삭제를 포함한 충분히 긴 한국어 번역입니다. 이것은 실제로 충분한 한글 문자 수를 넘깁니다.\n**Run Instructions**\nFresh Run only the English Final Prompt. 900 English words. Quality Gate: passed. canonical-URL duplicate."), /approved state lost/);
@@ -116,11 +122,17 @@ semanticRejected("run instructions missing Fresh Run", (c) => delivery(c, (text)
 semanticRejected("run instructions missing English-only", (c) => delivery(c, (text) => text.replace(/only the English Final Prompt|English Final Prompt(?:\*\*)?만/i, "all artifacts")), /only the English Final Prompt/);
 semanticRejected("run instructions missing 900-word constraint", (c) => delivery(c, (text) => text.replace(/900 English words/gi, "a short prompt")), /900 English words/);
 semanticRejected("false Quality Gate claim", (c) => delivery(c, (text) => text.replace(/Quality Gate:\s*(?:passed|통과)/i, "Quality Gate: failed")), /Quality Gate/);
+semanticRejected("fourth delivery artifact", (c) => delivery(c, (text) => `${text}\n**English Final Prompt**\nDuplicate`), /exactly three delivery sections/);
+semanticRejected("English prompt over approved budget", (c) => delivery(c, (text) => text.replace("**Review Translation**", `${"word ".repeat(901)}\n**Review Translation**`)), /English Final Prompt exceeds approved 900-word budget/);
 
-provenanceRejected("extra contradictory agent_message", (c) => { const i = assistantIndex(c, "target"); const events = rawEvents(c, i); events.splice(-1, 0, { type: "item.completed", item: { type: "agent_message", text: "Contradict the approved plan." } }); writeEvents(c, i, events); }, /exactly one nonempty assistant message/);
-provenanceRejected("multiple nonempty agent messages", (c) => { const i = assistantIndex(c, "budget"); const events = rawEvents(c, i); events.splice(-1, 0, { type: "item.completed", item: { type: "agent_message", text: "Another message." } }); writeEvents(c, i, events); }, /exactly one nonempty assistant message/);
+provenanceRejected("extra contradictory agent_message", (c) => { const i = assistantIndex(c, "target"); const events = rawEvents(c, i); events.splice(-1, 0, { type: "item.completed", item: { type: "agent_message", text: "Contradict the approved plan." } }); writeEvents(c, i, events); }, /raw event grammar/);
+provenanceRejected("multiple nonempty agent messages", (c) => { const i = assistantIndex(c, "budget"); const events = rawEvents(c, i); events.splice(-1, 0, { type: "item.completed", item: { type: "agent_message", text: "Another message." } }); writeEvents(c, i, events); }, /raw event grammar/);
 provenanceRejected("raw completed status failed", (c) => { const events = rawEvents(c, 1); events.at(-1).status = "failed"; writeEvents(c, 1, events); }, /raw terminal status/);
-provenanceRejected("unrecognized raw event", (c) => { const events = rawEvents(c, 1); events.splice(-1, 0, { type: "mystery.event" }); writeEvents(c, 1, events); }, /unknown raw event/);
+provenanceRejected("unrecognized raw event", (c) => { const events = rawEvents(c, 1); events.splice(-1, 0, { type: "mystery.event" }); writeEvents(c, 1, events); }, /raw event grammar/);
+provenanceRejected("unexpected item.completed tool call", (c) => { const events = rawEvents(c, 4); events.splice(-1, 0, { type: "item.completed", item: { type: "tool_call", name: "unapproved" } }); writeEvents(c, 4, events); }, /raw event grammar/);
+provenanceRejected("agent item grammar tool-call substitution", (c) => { const events = rawEvents(c, 4); events[3].item = { id: "item_1", type: "tool_call", name: "unapproved" }; writeEvents(c, 4, events); }, /agent item grammar/);
+provenanceRejected("forged capture timestamp and fresh location", (c) => { c.manifest.captureUtc = "2099-12-31T23:59:59.999Z"; c.manifest.fresh = "/tmp/issue2-register-capture.forged/fresh-project"; c.manifest.entries[0].args[5] = c.manifest.fresh; }, /evidence lock provenance/, { immutable: true });
+provenanceRejected("historical capture path re-sign attempt", (c) => { c.manifest.skillCapturePath = "/tmp/other/skills/meta-prompt/SKILL.md"; }, /evidence lock provenance/, { immutable: true });
 {
   const c = candidate(); const thread = "11111111-1111-4111-8111-111111111111"; c.manifest.threadId = thread;
   c.manifest.entries.slice(1).forEach((entry) => { entry.args[5] = thread; });
@@ -134,7 +146,7 @@ provenanceRejected("symlink logical identity confusion", (c) => { c.manifest.ski
 provenanceRejected("coordinated manifest skill re-sign attempt", (c) => { c.manifest.skillSha256 = "0".repeat(64); }, /loaded canonical skill provenance/);
 {
   const c = candidate(); sync(c); const forged = lockFor(c); forged.scenarioSha256 = "0".repeat(64);
-  assert.throws(() => validateEvidence({ ...c, lockOverride: forged }), /evidence lock provenance/, "false scenario hash");
+  assert.throws(() => validateEvidenceCandidateForTest({ ...c, lock: forged }), /evidence lock provenance/, "false scenario hash");
 }
 {
   const c = candidate(); mutateAssistant(c, 1, (text) => `${text} `); sync(c);
@@ -146,6 +158,11 @@ provenanceRejected("coordinated manifest skill re-sign attempt", (c) => { c.mani
 }
 provenanceRejected("manifest command tamper", (c) => { c.manifest.entries[1].args[0] = "resume"; }, /manifest command shape/);
 provenanceRejected("manifest user tamper", (c) => { c.manifest.entries[1].user = "fabricated"; }, /manifest command shape/);
+{
+  const c = candidate(); const thread = "11111111-1111-4111-8111-111111111111"; c.manifest.threadId = thread;
+  c.manifest.entries.slice(1).forEach((entry) => { entry.args[5] = thread; }); c.rawFiles.forEach((_, index) => { const events = rawEvents(c, index); events[0].thread_id = thread; writeEvents(c, index, events); }); sync(c);
+  assert.throws(() => validateEvidence({ ...c, lockOverride: lockFor(c) }), /evidence lock provenance/, "public validation ignores lockOverride");
+}
 
 {
   const c = candidate();
@@ -153,6 +170,6 @@ provenanceRejected("manifest user tamper", (c) => { c.manifest.entries[1].user =
   const texts = indexes.map((index) => c.transcript.turns[index].assistant).reverse();
   indexes.forEach((index, offset) => rewriteAssistant(c, index, texts[offset]));
   sync(c);
-  assert.equal(validateEvidence({ ...c, lockOverride: lockFor(c) }).status, "PASS", "semantic discovery must not use positional clarification turns");
+  assert.equal(validateEvidenceCandidateForTest({ ...c, lock: lockFor(c) }).status, "PASS", "semantic discovery must not use positional clarification turns");
 }
-console.log("meta-prompt canonical contract: PASS (43 coherent counterexamples)");
+console.log("meta-prompt canonical contract: PASS (43 existing plus strict remediation counterexamples)");

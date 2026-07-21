@@ -16,6 +16,14 @@ the current checkout's canonical file bytes against the captured SHA-256; the
 absolute capture-time path is informational and is never compared to a checkout
 path.
 
+`evidence-lock.json` also binds the recorded capture UTC timestamp, fresh
+capture location, and historical resolved skill path. These are historical
+claims rather than current-checkout paths, so a relocated checkout remains
+valid while a changed manifest claim is rejected. Normal callers use only
+`validateEvidence`, which always reads that immutable repository lock; the
+separate `test-evidence-helper.mjs` exists solely to exercise coherent mutation
+candidates with an explicitly supplied test lock.
+
 To reproduce outside routine CI, create a fresh temporary git project, symlink
 the canonical skill into `.agents/skills/meta-prompt`, then start and resume a
 single Codex conversation one user turn at a time:

@@ -1,6 +1,9 @@
 {
   "threadId": "019f86a0-bba9-7861-b165-1738800a7e39",
+  "captureUtc": "2026-07-21T21:41:41.339Z",
+  "fresh": "/tmp/issue2-register-capture.iWR1yd/fresh-project",
   "skillLogicalPath": "skills/meta-prompt/SKILL.md",
+  "skillCapturePath": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
   "skillSha256": "971a1271474da20ed12d1ef1b1dd240318c3bc596c187de7c1600cf11ff1c66d",
   "scenarioSha256": "ce23011ae2ce50c42aea5e156d78cbb74a3d134b3c0b071db597047e4ce37a32",
   "rawSha256": [
