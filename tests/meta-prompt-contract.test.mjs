@@ -106,7 +106,7 @@ mutated.turns.find((turn) => turn.phase === "receipt").text = "Immediately outpu
 assert.throws(() => validateObservedConversation(mutated), /plan|design|implement/i);
 
 const unanswered = structuredClone(observedTranscript);
-unanswered.turns = unanswered.turns.filter((turn) => turn.phase !== "clarification-response");
+unanswered.turns.find((turn) => turn.phase === "clarification-response").phase = "other-user-response";
 assert.throws(() => validateObservedConversation(unanswered), /clarification-response/);
 
 const placeholder = structuredClone(observedTranscript);
@@ -129,6 +129,41 @@ const reorderedDelivery = structuredClone(observedTranscript);
 reorderedDelivery.turns.find((turn) => turn.phase === "delivery").text =
   "Quality Gate: **Passed**\n### Review Translation\n### English Final Prompt\n### Run Instructions\nFresh Run: paste only the English Final Prompt";
 assert.throws(() => validateObservedConversation(reorderedDelivery), /separate and ordered/);
+
+const noIntroduction = structuredClone(observedTranscript);
+noIntroduction.turns.shift();
+assert.throws(() => validateObservedConversation(noIntroduction), /introduction|roles/);
+
+const invertedRoles = structuredClone(observedTranscript);
+invertedRoles.turns.forEach((turn) => { turn.role = turn.role === "assistant" ? "user" : "assistant"; });
+assert.throws(() => validateObservedConversation(invertedRoles), /roles/);
+
+const fakeProvenance = structuredClone(observedTranscript);
+fakeProvenance.metadata.host = "Not really Codex";
+fakeProvenance.metadata.canonicalSkillSha256 = "0".repeat(64);
+fakeProvenance.metadata.discovery = "not fresh";
+fakeProvenance.metadata.threadId = "placeholder";
+assert.throws(() => validateObservedConversation(fakeProvenance), /Codex|fresh|thread/);
+
+const earlyPrompt = structuredClone(observedTranscript);
+earlyPrompt.turns.find((turn) => turn.phase === "clarification").text += " ### English Final Prompt";
+assert.throws(() => validateObservedConversation(earlyPrompt), /Final Prompt/);
+
+const twoQuestions = structuredClone(observedTranscript);
+twoQuestions.turns.find((turn) => turn.phase === "clarification").text += " Another decision?";
+assert.throws(() => validateObservedConversation(twoQuestions), /one decision/);
+
+const contradictory = structuredClone(observedTranscript);
+contradictory.turns.find((turn) => turn.phase === "target-tool-response").text = "Do not confirm Codex; decide later.";
+assert.throws(() => validateObservedConversation(contradictory), /Codex/);
+
+const incompleteAlignment = structuredClone(observedTranscript);
+incompleteAlignment.turns.find((turn) => turn.phase === "alignment").text = "Alignment Gate: Acceptance Criteria TBD. Reply approve.";
+assert.throws(() => validateObservedConversation(incompleteAlignment), /TBD|Goal/);
+
+const wrongDelivery = structuredClone(observedTranscript);
+wrongDelivery.turns.find((turn) => turn.phase === "delivery").text = "### English Final Prompt\nBuild a cloud GUI.\n### Review Translation\n\n### Run Instructions\nFresh Run; paste only the English Final Prompt. Quality Gate: **Passed**";
+assert.throws(() => validateObservedConversation(wrongDelivery), /Node.js|separate and ordered/);
 
 for (const requiredScenarioTerm of [
   "덤프 끝",
