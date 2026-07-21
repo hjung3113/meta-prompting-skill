@@ -188,6 +188,11 @@ when the Prompt Budget cannot be confirmed.
 
 Deliver exactly these three separately labelled artifacts, in this order:
 
+Use these labels exactly: **English Final Prompt**, **Review Translation**, and
+**Run Instructions**. Do not rename them to synonyms such as "Korean
+translation" or `한국어 번역`; the **Review Translation** body is Korean, but
+its artifact label remains canonical.
+
 ### English Final Prompt
 
 Put the paste-ready English execution instructions in one clearly delimited
@@ -205,7 +210,7 @@ State plainly that the user must start a **Fresh Run** in the confirmed Target
 Tool, paste **only the English Final Prompt**, and keep this exploratory
 conversation out of the new conversation. Include the Prompt Budget and
 Quality Gate result, plus concrete success checks mapped to the Acceptance
-Criteria.
+Criteria. Refer to the review artifact only as **Review Translation**.
 
 Meta-Prompt never executes the Final Prompt in the exploratory Refinement
 Session. The Fresh Run is a required part of every Run Instructions artifact.
