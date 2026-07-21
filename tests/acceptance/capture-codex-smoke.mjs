@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // On-demand only: creates live Codex evidence. Routine tests never import it.
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, realpathSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -26,8 +26,10 @@ const turns = [
   "approve",
 ];
 const run = (args, name) => {
-  const output = execFileSync("codex", args, { cwd: fresh, encoding: "utf8" });
+  const result = spawnSync("codex", args, { cwd: fresh, input: "", encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 180000 });
+  const output = `${result.stdout}${result.stderr}`;
   writeFileSync(join(fresh, `${name}.jsonl`), output);
+  if (result.status !== 0) throw new Error(`${name} failed: ${result.status} ${result.error?.message ?? result.stderr}`);
   return output;
 };
 const first = run(["exec", "--json", "-C", fresh, turns[0]], "turn-00");
