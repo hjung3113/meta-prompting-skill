@@ -73,7 +73,7 @@ const validateSemanticContract = (t) => {
   assert.ok((korean.match(/[가-힣]/g) ?? []).length >= 30, "Review Translation must be substantive Korean"); assert.match(korean, /ID.*(?:삭제|제거)|ID 기반/i, "Korean approved state");
   assert.match(run, /Fresh Run/i); assert.match(run, /only the English Final Prompt|English Final Prompt(?:\*\*)?만/i); assert.match(run, /900 English words/i); assert.match(run, /Quality Gate.*(?:passed|통과)/i); assert.match(run, /canonical-URL duplicate|duplicate URL/i); return { delivery };
 };
-export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes }) {
+export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes, lockOverride }) {
   assert.equal(manifest.entries.length, manifest.nextIndex); assert.equal(manifest.nextIndex, transcript.turns.length);
   assert.equal(manifest.supportedModel, supportedModel, "false model provenance");
   assert.match(manifest.captureUtc, /^20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/, "UTC capture timestamp");
@@ -93,7 +93,7 @@ export function validateEvidence({ transcript, manifest, rawFiles, derivedBytes 
     assert.deepEqual(transcript.turns[i], { index: i, user: i ? user : null, assistant }, `derived binding ${i}`);
   }
   const t = transcript.turns; validateSemanticContract(t);
-  const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+  const lock = lockOverride ?? JSON.parse(readFileSync(lockPath, "utf8"));
   assert.deepEqual({ threadId: manifest.threadId, skillSha256: sha(readFileSync(canonicalSkill)), scenarioSha256: sha(readFileSync(scenarioPath)), rawSha256: rawFiles.map((raw) => sha(raw)), derivedSha256: sha(derivedBytes) }, lock, "evidence lock provenance");
   return { status: "PASS", observedTurnCount: t.length };
 }

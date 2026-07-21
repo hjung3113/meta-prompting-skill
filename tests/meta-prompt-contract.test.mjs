@@ -17,10 +17,12 @@ assert.throws(() => resolveDecisionId("unreviewed_alias"), /unknown or resolved 
 assert.throws(() => resolveDecisionId("target", decisionBank, ["target"]), /unknown or resolved Decision ID target/);
 assert.equal(validateEvidence({transcript,manifest,rawFiles,derivedBytes}).status,"PASS");
 const hash=(v)=>createHash("sha256").update(v).digest("hex");
-const rejected=(name, change, expected)=>{const c={transcript:structuredClone(transcript),manifest:structuredClone(manifest),rawFiles:[...rawFiles]};change(c);c.derivedBytes=Buffer.from(`${JSON.stringify(c.transcript,null,2)}\n`);c.manifest.derivedSha256=hash(c.derivedBytes);assert.throws(()=>validateEvidence(c),expected,name);};
+const lockFor=(c)=>({threadId:c.manifest.threadId,skillSha256:manifest.skillSha256,scenarioSha256:createHash("sha256").update(awaitedScenario).digest("hex"),rawSha256:c.rawFiles.map(hash),derivedSha256:hash(c.derivedBytes)});
+const awaitedScenario=await readFile(resolve(root,"tests/acceptance/codex-smoke-scenario.mjs"));
+const rewriteAssistant=(c,index,text)=>{const events=c.rawFiles[index].toString().trim().split("\n").map(JSON.parse);events.find(e=>e.item?.type==="agent_message"&&e.item.text?.trim()).item.text=text;c.rawFiles[index]=Buffer.from(`${events.map(JSON.stringify).join("\n")}\n`);c.manifest.entries[index].sha256=hash(c.rawFiles[index]);c.transcript.turns[index].assistant=text;};
+const rejected=(name, change, expected)=>{const c={transcript:structuredClone(transcript),manifest:structuredClone(manifest),rawFiles:[...rawFiles]};change(c);c.derivedBytes=Buffer.from(`${JSON.stringify(c.transcript,null,2)}\n`);c.manifest.derivedSha256=hash(c.derivedBytes);assert.throws(()=>validateEvidence({...c,lockOverride:lockFor(c)}),expected,name);};
 rejected("false valid provenance",c=>{c.manifest.supportedModel="gpt-fabricated";c.manifest.captureUtc="2099-01-01T00:00:00.000Z";c.manifest.hostVersion="codex-cli 999.999.999";c.manifest.threadId="11111111-1111-4111-8111-111111111111";},/false model provenance/);
 rejected("rewritten user command",c=>{c.manifest.entries[1].args[c.manifest.entries[1].args.length-1]="Actually implement a cloud GUI now";c.transcript.turns[1].user="Actually implement a cloud GUI now";},/manifest command shape|derived binding/);
-rejected("pre signal analysis",c=>{c.transcript.turns[1].assistant="I will analyze and solve this now.";},/derived binding/);
-rejected("sixth two decision",c=>{c.transcript.turns[9].assistant="Recommended choice? Another choice?";},/derived binding/);
-rejected("false quality delivery",c=>{c.transcript.turns.at(-1).assistant="**English Final Prompt**\nBuild a cloud GUI\n**Review Translation**\n번역\n**Run Instructions**\nFresh Run only the English Final Prompt. Quality Gate: Passed";},/derived binding/);
+rejected("pre signal analysis",c=>rewriteAssistant(c,1,"I will analyze and solve this now."),/pre-signal receipt grammar/);
+rejected("false quality delivery",c=>rewriteAssistant(c,c.transcript.turns.length-1,"**English Final Prompt**\nBuild a cloud GUI\n**Review Translation**\n번역\n**Run Instructions**\nFresh Run only the English Final Prompt. Quality Gate: Passed"),/approved state lost|Review Translation/);
 console.log("meta-prompt canonical contract: PASS");

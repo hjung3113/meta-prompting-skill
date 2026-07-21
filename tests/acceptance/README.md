@@ -30,12 +30,22 @@ node tests/acceptance/validate-codex-smoke.mjs
 The smoke command is intentionally on-demand and is not part of routine CI,
 because it makes a live model call.
 
-For a complete capture, run these exact commands (one `step` per live turn):
+For a complete capture, use an external directory and run exactly one `step`
+per live turn. After every step, inspect `checkpoint.json`: continue only while
+it names one pending registered decision; when it reaches `phase: "approval"`,
+run one approval step; it must then reach `phase: "complete"`. Never use a
+fixed turn count or a shell loop: the register controls the number and order of
+clarifications.
 
 ```sh
-node tests/acceptance/capture-codex-smoke.mjs init tests/acceptance/evidence --replace
-for n in $(seq 1 13); do node tests/acceptance/capture-codex-smoke.mjs step tests/acceptance/evidence; done
-node tests/acceptance/capture-codex-smoke.mjs finalize tests/acceptance/evidence
+capture_dir=$(mktemp -d /tmp/meta-prompt-capture.XXXXXX)
+node tests/acceptance/capture-codex-smoke.mjs init "$capture_dir"
+node tests/acceptance/capture-codex-smoke.mjs step "$capture_dir"
+# Inspect "$capture_dir/checkpoint.json" and the corresponding raw turn, then
+# repeat exactly one step at a time until phase is complete.
+node tests/acceptance/capture-codex-smoke.mjs finalize "$capture_dir"
+# Copy only the completed generated manifest/raw bundle into evidence/, derive,
+# regenerate evidence-lock.json from immutable bytes, then validate.
 node tests/acceptance/derive-codex-transcript.mjs
 node tests/acceptance/validate-codex-smoke.mjs
 ```
