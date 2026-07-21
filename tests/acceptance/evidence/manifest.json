@@ -1,7 +1,7 @@
 {
-  "fresh": "/tmp/meta-capture.d6JP1d/fresh-project",
+  "fresh": "/tmp/meta-final.orfVDd/fresh-project",
   "nextIndex": 11,
-  "threadId": "019f85e1-49da-7d92-b9ff-efd484613985",
+  "threadId": "019f8601-f974-7a31-abaa-0a6818a1f425",
   "entries": [
     {
       "index": 0,
@@ -9,12 +9,12 @@
         "exec",
         "--json",
         "-C",
-        "/tmp/meta-capture.d6JP1d/fresh-project",
+        "/tmp/meta-final.orfVDd/fresh-project",
         "$meta-prompt"
       ],
       "status": 0,
       "raw": "turn-00.jsonl",
-      "sha256": "156fe8056f087173283326adf16f83185bd6816c2f3153dd0cf5da3149842a1e"
+      "sha256": "fab5d857993f364f0be382262f902cddef656bc8437de49573070484507d4fe8"
     },
     {
       "index": 1,
@@ -22,12 +22,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "I need a fictional offline bookmark manager plan."
       ],
       "status": 0,
       "raw": "turn-01.jsonl",
-      "sha256": "57e9b5f503c711fe8e59f6aaa3714fe6ffb1e90e8db1f2bb0852a513df312cd3"
+      "sha256": "d7d03f23e8ce2806c25ef876fb7d0c1f99f533314ac0320609193ad0f7fd0f8b"
     },
     {
       "index": 2,
@@ -35,12 +35,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "It needs add, list, remove; no cloud sync or GUI. 덤프 끝"
       ],
       "status": 0,
       "raw": "turn-02.jsonl",
-      "sha256": "851163c8018b1feb9c10468607e35b64e06f6c4bd4e9e5d6f2e8dfd8fc2bd846"
+      "sha256": "7d6c4bebeccf56067f46b356f66f195aaa6f489c7ffa15b4552d81741da77968"
     },
     {
       "index": 3,
@@ -48,12 +48,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Confirm Codex as the Target Tool."
       ],
       "status": 0,
       "raw": "turn-03.jsonl",
-      "sha256": "1c9aa1a9af74067e241f595ae2f869a336ecd6b408297e90e92c92ab5da673ee"
+      "sha256": "d8039bdae28002a6c5d70531213b484d9c37e78a84780eb101f596bc00731b9e"
     },
     {
       "index": 4,
@@ -61,12 +61,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Confirm 900 English words maximum."
       ],
       "status": 0,
       "raw": "turn-04.jsonl",
-      "sha256": "04e3a77a71e7e4f85949bfcb51b75799b0372942daed1e0dc932db56b8a87621"
+      "sha256": "dc9f0c686f2c6acca4f1bd1a71fb12e6fff3d3584063a4bad5e009a5706dc69d"
     },
     {
       "index": 5,
@@ -74,12 +74,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Use Node.js with TypeScript."
       ],
       "status": 0,
       "raw": "turn-05.jsonl",
-      "sha256": "222d74a03f4098ff54c08b4bb322182851d750353359607b203c5100e9973a18"
+      "sha256": "3db8c47ea8dbe46b7c9d275506e847739f3a7cedd4abafc3bf06c3c3a59d4f09"
     },
     {
       "index": 6,
@@ -87,12 +87,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Use a Markdown plan returned only in the response."
       ],
       "status": 0,
       "raw": "turn-06.jsonl",
-      "sha256": "41ef2330861cb1b9fa11c388c57cbe72af2c7a9c81904bf4d82d40d806c9ce68"
+      "sha256": "60fbe0dbf7c9a25b26fd6302e6c24250226b426413086d744235a6a37055d2d8"
     },
     {
       "index": 7,
@@ -100,12 +100,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Use generated IDs, required URLs, optional title and tags."
       ],
       "status": 0,
       "raw": "turn-07.jsonl",
-      "sha256": "a13d0b944a0584c85d4745d4ee3e62719e5ced59623093654f248c9eb5d2918e"
+      "sha256": "c58fc65879273bd501f109c801ef8f68c6f668d44379c0e160f13e4cf4688284"
     },
     {
       "index": 8,
@@ -113,12 +113,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Adopt the exact add/list/remove criterion and URL-validation plus malformed-JSON tests."
       ],
       "status": 0,
       "raw": "turn-08.jsonl",
-      "sha256": "b721d8713e32644423b538dd5b605a8c0e3cd6b65c436a630b315c06b34cc717"
+      "sha256": "3b593d9cc61c7a005f287bf56f0332a45398d36a76a00229dabef0d6d72486d0"
     },
     {
       "index": 9,
@@ -126,12 +126,12 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "Adopt invalid URL, missing ID, malformed JSON failures; exclusions are implementation, cloud, GUI, external services; remaining assumptions none. Present Alignment Gate."
       ],
       "status": 0,
       "raw": "turn-09.jsonl",
-      "sha256": "fb8caa8e61460fa0797d9d6468b76dd7e8a29589717aab12d5e1fcb37a94a1cc"
+      "sha256": "0068da64ad13931f11d8de0b647f7f0e34fb55ff6fe67c278dc11843a3366eae"
     },
     {
       "index": 10,
@@ -139,16 +139,16 @@
         "exec",
         "resume",
         "--json",
-        "019f85e1-49da-7d92-b9ff-efd484613985",
+        "019f8601-f974-7a31-abaa-0a6818a1f425",
         "approve"
       ],
       "status": 0,
       "raw": "turn-10.jsonl",
-      "sha256": "ab919cc06b9b6bb2b059a2391045beb995a8513fd6bb150458e08463e3815f1f"
+      "sha256": "fcb8d3871058703b823e9c46631275f2299215c855f59de010b6fe1bbe08edbf"
     }
   ],
   "skill": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
-  "skillSha256": "1b4839168047e3cf107ec58474a5c75c2892ee255bcb5e2dff7f294988d51a1f",
+  "skillSha256": "b33748539355c44f94f13d7708c84bfc4b5197bf19b0eafaffad62fd4abc41ef",
   "hostVersion": "codex-cli 0.144.6",
   "redactions": "none; synthetic context"
 }
