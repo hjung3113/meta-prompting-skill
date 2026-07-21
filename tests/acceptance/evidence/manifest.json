@@ -1,20 +1,22 @@
 {
-  "fresh": "/tmp/meta-protocol.zE3oUj/fresh-project",
+  "fresh": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/tests/acceptance/evidence/fresh-project",
   "nextIndex": 13,
-  "threadId": "019f861c-3702-7280-96d9-55998b3874ce",
+  "threadId": "019f8623-6410-7111-b614-39ef215bfe31",
   "entries": [
     {
       "index": 0,
       "args": [
         "exec",
         "--json",
+        "--model",
+        "gpt-5.6-terra",
         "-C",
-        "/tmp/meta-protocol.zE3oUj/fresh-project",
+        "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/tests/acceptance/evidence/fresh-project",
         "$meta-prompt"
       ],
       "status": 0,
       "raw": "turn-00.jsonl",
-      "sha256": "69e34f8f24f19c94dca9cd65e1197029fdfc908db582f5ad7d3bd8a9d05f1776"
+      "sha256": "3c559050cb58dc29be28d2b64172973ba9ad99a0ec9f9e9c28522d6ab786c6fd"
     },
     {
       "index": 1,
@@ -22,12 +24,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "I need a fictional offline bookmark manager plan."
       ],
       "status": 0,
       "raw": "turn-01.jsonl",
-      "sha256": "e698427b59d490e1d70bbb696084dd36acc2633ec4589ffb663ee886fbdf4aca"
+      "sha256": "0fc716c8800381422e67b0e2b334bf2a2e30ef596d626b6e00dffd27157d2445"
     },
     {
       "index": 2,
@@ -35,12 +39,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "It needs add, list, remove; no cloud sync or GUI. 덤프 끝"
       ],
       "status": 0,
       "raw": "turn-02.jsonl",
-      "sha256": "c7109f7a622de04cdb9c1fd141cf4b511131460119ec41726dd9fc445027e52c"
+      "sha256": "0e9e01db637467e0e5031fbc06a2c79dae6e58f897cbb9000e6e6b8b56ded7b9"
     },
     {
       "index": 3,
@@ -48,12 +54,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Confirm Codex as the Target Tool."
       ],
       "status": 0,
       "raw": "turn-03.jsonl",
-      "sha256": "c90c14dee0690aa93dd4f44e1482d8463f45ac7dd5796d73187d7c7f35a6e7fc"
+      "sha256": "75ce5dee6c8dc350d94af024b072fbcb1da4ca77de4e210b55c9da29a3634190"
     },
     {
       "index": 4,
@@ -61,12 +69,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Confirm 900 English words maximum."
       ],
       "status": 0,
       "raw": "turn-04.jsonl",
-      "sha256": "497bf545d4f9a8b28c04a0dbff5dd0646d2c502eedfac1403c47cbaa764a5deb"
+      "sha256": "380e29cc4b92f014e7373e4eedbbad065d8c14d8bef6921d72802df7ad5164bb"
     },
     {
       "index": 5,
@@ -74,12 +84,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Use Node.js with TypeScript."
       ],
       "status": 0,
       "raw": "turn-05.jsonl",
-      "sha256": "a960f38636f78458ae96ae1a7d2f5bf497ccf2fbe9be9df1a1305ee5e292ed53"
+      "sha256": "566f698efbd6391cb91a81d20b2811a8ec8bbd73093877a5d0d89b2851e82a04"
     },
     {
       "index": 6,
@@ -87,12 +99,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Use a Markdown plan returned only in the response."
       ],
       "status": 0,
       "raw": "turn-06.jsonl",
-      "sha256": "91e39425d27b67e070e833bce9b5d3a7bc62cc1510ba5aeb975670f0016d08db"
+      "sha256": "29fcfb8670749e3bfed54a50625fec7167e615b6831f79bc05792055e5a09528"
     },
     {
       "index": 7,
@@ -100,12 +114,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Use generated IDs, required URLs, optional title and tags."
       ],
       "status": 0,
       "raw": "turn-07.jsonl",
-      "sha256": "fe0d9f988e798752073498840d0c8daf4dfe176950f302425041eebe4af34ed6"
+      "sha256": "cadd5600bbda0c47a38f68fed964bb05fddf62328a1a3246c79d8b0cf184ed2c"
     },
     {
       "index": 8,
@@ -113,12 +129,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Adopt the exact add/list/remove criterion and URL-validation plus malformed-JSON tests."
       ],
       "status": 0,
       "raw": "turn-08.jsonl",
-      "sha256": "7a17800138995efd14d2608ff1f1b9bf1e056df60f42a42db09817707657b259"
+      "sha256": "149c3642eed3f83274cf19f2ecab13a2c77dfc8befd5ea2e864f4df63b62d7d6"
     },
     {
       "index": 9,
@@ -126,12 +144,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Adopt invalid URL, missing ID, malformed JSON failures; exclusions are implementation, cloud, GUI, external services; remaining assumptions none."
       ],
       "status": 0,
       "raw": "turn-09.jsonl",
-      "sha256": "92a335766ddc8f3f147a91e3d2bf149e3ea014c165de915c544d0cf934d3cceb"
+      "sha256": "6d0afc9d70e24d5f355b815145d0c74a423a0bf4f74b0f0ccb229e454b744b3d"
     },
     {
       "index": 10,
@@ -139,12 +159,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Confirm local JSON storage in a suitable user data directory."
       ],
       "status": 0,
       "raw": "turn-10.jsonl",
-      "sha256": "032a81f68a36bbee47ae6b3b07d91d22c0ed31b845d33c1597a42256640b7b4b"
+      "sha256": "3c2438777b036c16b3ec4a0303136215ab0ee94c0ee87eb390af026772b4c2bb"
     },
     {
       "index": 11,
@@ -152,12 +174,14 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "Present the complete Alignment Gate now, including every mandatory field and remaining assumptions."
       ],
       "status": 0,
       "raw": "turn-11.jsonl",
-      "sha256": "e43846ac9ccb06c41deb8e12cff7572e85f399fdab7fa0559e04a0c6e00f7221"
+      "sha256": "ab9101f76feee6d39f424994db9372077f33a24027079a607afcc1d375a81b79"
     },
     {
       "index": 12,
@@ -165,16 +189,21 @@
         "exec",
         "resume",
         "--json",
-        "019f861c-3702-7280-96d9-55998b3874ce",
+        "--model",
+        "gpt-5.6-terra",
+        "019f8623-6410-7111-b614-39ef215bfe31",
         "approve"
       ],
       "status": 0,
       "raw": "turn-12.jsonl",
-      "sha256": "0d7e1e665c6267abaa6986c738eefe40f874328b1831a96d3a2a77a95f3d1da4"
+      "sha256": "5602d6df27255d7d1c2e61366463926558a493875c941285d53444d679dbe612"
     }
   ],
   "skill": "/Users/hyojung/orca/workspaces/meta-prompting-skill/issue-2-luna-impl/skills/meta-prompt/SKILL.md",
   "skillSha256": "f9b39c2ede22ecc2f56740c667781d7a300a02804623d30c24a0ea431bb1bd8f",
+  "supportedModel": "gpt-5.6-terra",
+  "captureUtc": "2026-07-21T19:24:53.953Z",
   "hostVersion": "codex-cli 0.144.6",
-  "redactions": "none; synthetic context"
+  "redactions": "none; synthetic context",
+  "derivedSha256": "6fd90b74b3e612f35841b749b9b255a88d9e1f85ad57667ec1f70753dc394f4a"
 }

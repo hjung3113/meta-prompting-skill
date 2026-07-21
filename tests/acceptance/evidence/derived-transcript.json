@@ -1,76 +1,69 @@
 {
-  "provenance": {
-    "threadId": "019f861c-3702-7280-96d9-55998b3874ce",
-    "hostVersion": "codex-cli 0.144.6",
-    "skillSha256": "f9b39c2ede22ecc2f56740c667781d7a300a02804623d30c24a0ea431bb1bd8f",
-    "rawManifestSha256": "071f5fe7c3d97664c82078c8fd9cc07f8ef92a77d451bf60c9bbf675daf93ce6",
-    "redactions": "none; synthetic context"
-  },
   "turns": [
     {
       "index": 0,
       "user": null,
-      "assistant": "**Context Dump**를 여러 메시지로 보내주세요. 메모, 목표, 제약, 예시, 코드, 참고자료를 편한 순서로 덤프하면 됩니다.\n\n덤프 중에는 저는 짧게 접수만 하고 분석·설계·실행은 하지 않습니다. 마지막 내용과 함께 또는 별도 메시지로 **`덤프 끝`**이라고 보내면 덤프를 닫겠습니다."
+      "assistant": "**Context Dump**를 여러 메시지로 보내주세요. 거친 메모, 목표, 제약, 예시, 코드, 참고자료를 자유롭게 포함해도 됩니다.\n\n덤프 중에는 저는 내용만 수신 확인하고, 분석·설계·해결·프롬프트 생성은 하지 않습니다. 마지막 메시지에 반드시 `덤프 끝`이라고 적어주세요(같은 메시지에 마지막 내용과 함께 써도 됩니다).\n\n이후 Target Tool과 Prompt Budget을 차례로 확인하고, 한 번에 하나씩 결정 사항을 정리한 뒤 승인받아 최종 프롬프트를 만들겠습니다. 첫 덤프를 보내주세요."
     },
     {
       "index": 1,
       "user": "I need a fictional offline bookmark manager plan.",
-      "assistant": "받았습니다. 계속 보내시거나, 마치면 `dump complete`를 보내주세요."
+      "assistant": "받았습니다. 계속 보내시거나, 마쳤다면 `덤프 끝`이라고 적어주세요."
     },
     {
       "index": 2,
       "user": "It needs add, list, remove; no cloud sync or GUI. 덤프 끝",
-      "assistant": "Context Dump를 닫았습니다. 이제 구체화를 시작하겠습니다.\n\nTarget Tool 결정: 이 세션의 호스트는 Codex이며, Fresh Run에서 실행할 Target Tool도 **Codex**로 두는 것을 권장합니다. 코딩 에이전트용 실행 프롬프트로 정리하기에 가장 직접적입니다. 다른 도구를 사용할 예정이면 이름을 알려주세요; 아니라면 `Codex로 진행`이라고 답해주세요."
+      "assistant": "Context Dump가 닫혔습니다. 이제 구체화를 시작하겠습니다.\n\n먼저 Target Tool을 확인할게요. 현재 이 세션의 호스트는 Codex이며, 실행용 영어 프롬프트도 **Codex Fresh Run**에 전달하는 것을 권장합니다. 오프라인 CLI 계획을 실행·검증하기에 적합합니다.\n\nTarget Tool을 Codex로 확정할까요, 아니면 다른 코딩 도구로 바꿀까요?"
     },
     {
       "index": 3,
       "user": "Confirm Codex as the Target Tool.",
-      "assistant": "Prompt Budget 결정: 현재 제한은 없습니다. Codex Fresh Run용 English Final Prompt는 **900 words 이하**를 권장합니다. 구현 범위와 검증 조건을 담되 실행 지시가 불필요하게 길어지지 않는 크기입니다. 이 예산으로 진행할까요, 아니면 다른 단위·한도를 지정할까요?"
+      "assistant": "Target Tool은 **Codex**로 확정했습니다.\n\n다음은 Prompt Budget입니다. 현재 한도는 지정되지 않았습니다. 실행 지시와 검증 기준을 충분히 담되 Fresh Run에서 간결하게 유지하도록, 영어 Final Prompt는 **최대 900단어**를 권장합니다. 이는 작은 오프라인 CLI 계획에 보통 충분한 분량입니다.\n\n900단어로 확정할까요? 다른 단어 한도를 원하면 지정해 주세요."
     },
     {
       "index": 4,
       "user": "Confirm 900 English words maximum.",
-      "assistant": "열린 결정: 최종 산출물의 형식입니다. **구현 준비용 기술 계획**(CLI 명령 설계, 오프라인 저장 방식, 데이터 모델, 검증 계획)을 권장합니다. 요청이 “plan”이고 GUI·클라우드 동기화가 제외되어 있어, 바로 구현 가능한 범위를 명시하는 문서가 가장 적합합니다. 이 형식으로 할까요, 아니면 다른 형태의 계획을 원하나요?"
+      "assistant": "Prompt Budget은 영어 Final Prompt 기준 **최대 900단어**로 확정했습니다.\n\n남은 핵심 결정은 산출물 형태입니다. 현재 이해는 “구현이 아닌, 가상의 오프라인 북마크 관리자에 대한 실행 가능한 계획”입니다. Codex가 만들 산출물은 **Markdown 설계·구현 계획**으로 두는 것을 권장합니다. 기능, 로컬 저장 방식, CLI 명령, 데이터 모델, 단계별 구현 및 검증을 명확히 검토할 수 있기 때문입니다.\n\n이 형태로 확정할까요, 아니면 소스 코드·테스트·다른 문서까지 포함하길 원하나요?"
     },
     {
       "index": 5,
       "user": "Use Node.js with TypeScript.",
-      "assistant": "Node.js와 TypeScript를 기술 제약으로 기록했습니다.\n\n산출물 형식은 아직 열려 있습니다. **구현 준비용 기술 계획**을 권장합니다. Node.js/TypeScript 기반의 CLI 구조, 로컬 저장소, 명령 동작, 테스트·검증을 명확히 할 수 있기 때문입니다. 이 형식으로 진행할까요, 아니면 다른 산출물을 원하나요?"
+      "assistant": "기술 스택은 **Node.js + TypeScript**로 기록했습니다.\n\n산출물 형태는 아직 열려 있습니다. 요청의 “plan”에 맞춰, Codex가 코드 변경 없이 **Node.js/TypeScript 기준의 Markdown 구현 계획**만 작성하도록 하는 것을 권장합니다. 요구사항을 먼저 검토·승인하기 쉽고, 구현 범위를 과도하게 넓히지 않습니다.\n\n계획 문서만 생성하도록 확정할까요, 아니면 계획과 함께 실제 TypeScript 코드도 생성하도록 할까요?"
     },
     {
       "index": 6,
       "user": "Use a Markdown plan returned only in the response.",
-      "assistant": "열린 결정: 북마크의 로컬 저장 형식입니다. **사용자별 JSON 파일 하나**를 권장합니다. Node.js/TypeScript CLI에 의존성 없이 맞고, 추가·목록·삭제를 사람이 직접 검사하기도 쉽습니다. 요청에는 대규모 검색·동시 접근·관계형 조회 요구가 없으므로 데이터베이스는 과도할 수 있습니다. JSON 파일로 할까요, 아니면 SQLite 등 다른 저장 방식을 원하나요?"
+      "assistant": "산출물은 응답에만 포함되는 **Markdown 계획 문서**로 확정했습니다. 코드·파일 생성은 제외합니다.\n\n다음 결정은 로컬 저장 방식입니다. **사용자 홈 디렉터리 아래의 단일 JSON 파일**(예: `~/.bookmarks/bookmarks.json`)을 권장합니다. 오프라인, 세 가지 CRUD 명령, Node.js/TypeScript라는 범위에 가장 단순하고 이식성이 좋습니다. 다만 요청에는 데이터 형식이 명시되지 않아 JSON·SQLite·plain text 모두 가능합니다.\n\nJSON 파일 저장으로 확정할까요, 아니면 SQLite 또는 다른 형식을 원하나요?"
     },
     {
       "index": 7,
       "user": "Use generated IDs, required URLs, optional title and tags.",
-      "assistant": "생성 ID, 필수 URL, 선택 제목·태그를 데이터 모델 제약으로 기록했습니다.\n\n저장 형식 결정은 아직 필요합니다. **사용자별 JSON 파일 하나**를 권장합니다. 이 필드 집합과 세 명령 범위에 단순하고, 오프라인 상태에서 검사·백업이 쉽습니다. JSON 파일을 승인할까요, 아니면 SQLite 등 다른 형식을 선택할까요?"
+      "assistant": "데이터 모델 조건을 기록했습니다: 자동 생성 ID, 필수 URL, 선택 title·tags입니다.\n\n저장 방식은 여전히 정해지지 않았습니다. 이 모델에는 **단일 로컬 JSON 파일**을 권장합니다. 구조가 단순하고, URL·선택 필드·생성 ID를 별도 의존성 없이 안전하게 저장할 수 있습니다.\n\nJSON 파일 저장으로 확정할까요, 아니면 SQLite 등 다른 로컬 저장소를 원하나요?"
     },
     {
       "index": 8,
       "user": "Adopt the exact add/list/remove criterion and URL-validation plus malformed-JSON tests.",
-      "assistant": "`add`, `list`, `remove`의 정확한 동작과 URL 검증·손상된 JSON 테스트를 Acceptance Criteria 및 검증 범위로 기록했습니다.\n\n저장 형식만 아직 미결입니다. **사용자별 JSON 파일 하나**를 권장합니다. 오프라인 Node.js/TypeScript CLI 범위에서 생성 ID와 선택 필드를 단순히 보존하고, 손상된 JSON 처리도 명확히 테스트할 수 있기 때문입니다. JSON 파일로 확정할까요, 아니면 다른 저장 방식을 지정할까요?"
+      "assistant": "수용 기준을 확정했습니다: `add`, `list`, `remove`가 각각 동작하고, URL 유효성 검사와 손상된 JSON 저장 파일 처리 테스트를 포함합니다. “malformed JSON” 테스트 요청에 따라 저장소는 **단일 로컬 JSON 파일**로도 확정합니다.\n\n다음 결정은 삭제 대상 지정 방식입니다. 생성 ID가 이미 필요하므로, **`remove <id>`로 ID만 받아 삭제**하도록 권장합니다. URL 중복이나 제목 변경에도 모호하지 않고 자동 생성 ID의 목적을 살립니다.\n\nID 기반 삭제로 확정할까요, 아니면 URL로도 삭제할 수 있어야 하나요?"
     },
     {
       "index": 9,
       "user": "Adopt invalid URL, missing ID, malformed JSON failures; exclusions are implementation, cloud, GUI, external services; remaining assumptions none.",
-      "assistant": "실패 조건과 제외 범위를 기록했습니다: 잘못된 URL, 없는 ID, 손상된 JSON은 예측 가능하게 실패해야 하며, 구현·클라우드·GUI·외부 서비스는 범위 밖입니다.\n\n저장 형식은 여전히 결정되지 않았습니다. **사용자별 JSON 파일 하나**를 권장합니다. 이 선택이 데이터 모델과 손상된 JSON 검증 방식을 확정합니다. JSON 파일을 확정할까요, 아니면 다른 저장 방식을 지정할까요?"
+      "assistant": "실패 조건으로 **잘못된 URL**, **존재하지 않는 ID**, **손상된 JSON**을 채택했습니다. 제외 범위는 구현 작업, 클라우드, GUI, 외부 서비스이며, 추가 가정은 없다고 기록했습니다.\n\n삭제 대상 지정 방식만 남아 있습니다. 생성 ID가 요구되므로 **`remove <id>`로 ID만 받아 삭제**하는 방식을 권장합니다. URL·제목 변경이나 중복 URL에서도 모호하지 않습니다.\n\nID 기반 삭제로 확정할까요, 아니면 URL 기반 삭제도 필요할까요?"
     },
     {
       "index": 10,
       "user": "Confirm local JSON storage in a suitable user data directory.",
-      "assistant": "로컬 사용자 데이터 디렉터리의 JSON 저장소로 확정했습니다.\n\n열린 결정: CLI 명령의 인터페이스입니다. `bookmark add <url> [--title <title>] [--tags <tag,...>]`, `bookmark list`, `bookmark remove <id>`를 권장합니다. 필수 URL·선택 메타데이터·생성 ID 모델에 직접 대응하고, 사용자가 검증하기 쉽습니다. 이 인터페이스를 채택할까요, 아니면 명령/옵션을 변경할까요?"
+      "assistant": "로컬 저장소는 **적절한 사용자 데이터 디렉터리의 JSON 파일**로 확정했습니다.\n\n남은 결정은 삭제 대상 지정 방식입니다. 자동 생성 ID와 “missing ID” 실패 조건에 맞춰, **`remove <id>`로 ID만 받아 삭제**하도록 권장합니다. URL이 중복되거나 제목이 바뀌어도 모호하지 않습니다.\n\nID 기반 삭제로 확정할까요, 아니면 URL 기반 삭제도 지원해야 하나요?"
     },
     {
       "index": 11,
       "user": "Present the complete Alignment Gate now, including every mandatory field and remaining assumptions.",
-      "assistant": "## Alignment Gate\n\n- Goal and actor: Codex will produce a fictional, implementation-ready Markdown plan for a developer designing an offline bookmark-manager CLI.\n- Deliverable and inputs: Return only the Markdown plan in the response. It will use Node.js with TypeScript, local JSON storage in a suitable user data directory, and bookmark records with generated IDs, required URLs, optional titles, and optional tags.\n- In scope: Define the CLI’s `add`, `list`, and `remove` behavior; data model; local persistence; URL validation; error behavior; and a test/verification plan.\n- Explicit exclusions: No implementation, cloud sync, GUI, or external services.\n- Constraints: Target Tool is Codex. The English Final Prompt must be at most 900 English words.\n- Acceptance Criteria and verification evidence:\n  - The plan defines inspectable behavior for `add`, `list`, and `remove`.\n  - `add` requires a valid URL and creates an ID; title and tags remain optional.\n  - The verification plan covers invalid URLs, removal with a missing ID, and malformed JSON storage.\n  - The plan identifies expected failure behavior for each of those cases.\n- Failure conditions and edge cases: Invalid URL, unknown/missing bookmark ID, and malformed local JSON must fail predictably rather than silently corrupting data.\n- Remaining assumptions: None.\n\nApprove this Alignment Gate by replying `approve`, or specify the field to revise."
+      "assistant": "## Alignment Gate\n\n- Goal and actor: Codex가 사용자를 위한 가상의 오프라인 CLI 북마크 관리자의 Markdown 계획을 작성합니다.\n\n- Deliverable and inputs: 응답 안에만 반환하는 Markdown 계획입니다. Node.js와 TypeScript를 기준으로 `add`, `list`, `remove` 명령, 데이터 모델, 로컬 저장, 오류 처리, 테스트·검증 계획을 다룹니다.\n\n- In scope: 자동 생성 ID, 필수 URL, 선택 title·tags, 적절한 사용자 데이터 디렉터리의 로컬 JSON 저장소, ID 기반 `remove`, URL 검증, 정상 CRUD 흐름과 오류 흐름의 테스트 계획.\n\n- Explicit exclusions: 실제 구현·코드·파일 생성, GUI, 클라우드 동기화, 외부 서비스.\n\n- Constraints: 완전 오프라인; Target Tool은 Codex; 영어 Final Prompt의 최대 길이는 900단어입니다.\n\n- Acceptance Criteria and verification evidence:\n  - 유효한 URL을 `add`하면 ID가 생성되고 URL·선택 title·tags가 로컬 JSON에 지속됩니다.\n  - `list`는 저장된 북마크를 식별 가능한 ID와 함께 표시합니다.\n  - `remove <id>`는 해당 레코드를 제거하며, 이후 `list`에 나타나지 않습니다.\n  - 잘못된 URL, 누락되거나 존재하지 않는 ID, malformed JSON에 대한 실패 처리가 계획과 테스트 케이스에 명시됩니다.\n  - 검증 근거는 명령별 정상·실패 테스트 시나리오와 JSON 저장소 상태 확인입니다.\n\n- Failure conditions and edge cases: invalid URL, missing/unknown ID, 손상된 JSON 파일. 오류는 명확히 보고하고 저장 데이터를 조용히 덮어쓰지 않아야 합니다.\n\n- Remaining assumptions: 없음.\n\n이 Alignment Gate를 승인하려면 `approve` 또는 `승인`이라고 답해 주세요. 승인 후에만 세 가지 최종 산출물을 생성합니다."
     },
     {
       "index": 12,
       "user": "approve",
-      "assistant": "**English Final Prompt**\n\n```text\nAct as a technical planner. Produce only a Markdown implementation plan for a fictional offline bookmark-manager CLI; do not write code or implement anything.\n\nContext:\n- The intended implementation stack is Node.js with TypeScript.\n- The application is offline-only.\n- Persist bookmarks in one local JSON file located in a suitable per-user data directory.\n- Each bookmark has: a generated ID, a required URL, and optional title and tags.\n\nDeliverable:\nReturn a concise, execution-ready Markdown plan with these sections:\n1. Scope and non-goals\n2. CLI behavior\n3. Data model and local storage\n4. Validation and error handling\n5. Test and verification plan\n6. Implementation sequence\n\nRequirements:\n- Define the exact observable behavior of `add`, `list`, and `remove`.\n- `add` must reject an invalid URL, generate a stable bookmark ID, and accept optional title and tags.\n- `list` must describe how stored bookmarks are presented.\n- `remove` must remove by generated ID and fail clearly when the ID does not exist.\n- Explain how the user-data directory and JSON file are selected and initialized.\n- Define predictable handling for malformed JSON; do not overwrite or silently discard corrupted data.\n- Make verification executable: specify tests for valid add/list/remove behavior, invalid URLs, missing IDs, and malformed JSON.\n- State expected result or failure message/category for every listed failure case.\n\nExclusions:\n- Do not provide implementation code.\n- Do not include cloud sync, a GUI, external services, or third-party integrations.\n\nAcceptance criteria:\n- The plan makes `add`, `list`, and `remove` behavior inspectable.\n- It includes the required record fields and local JSON persistence.\n- It explicitly covers invalid URL, missing-ID, and malformed-JSON failures.\n- It contains concrete verification evidence for each required behavior and failure.\n```\n\n**Review Translation**\n\n```text\n기술 계획자로 행동하세요. 가상의 오프라인 북마크 관리자 CLI를 위한 Markdown 구현 계획만 작성하세요. 코드를 작성하거나 구현하지 마세요.\n\n맥락:\n- 의도된 구현 스택은 Node.js와 TypeScript입니다.\n- 애플리케이션은 오프라인 전용입니다.\n- 북마크는 적절한 사용자별 데이터 디렉터리에 있는 하나의 로컬 JSON 파일에 저장합니다.\n- 각 북마크는 생성된 ID, 필수 URL, 선택 제목과 태그를 가집니다.\n\n산출물:\n다음 섹션을 포함하는 간결하고 실행 준비된 Markdown 계획을 반환하세요.\n1. 범위와 비목표\n2. CLI 동작\n3. 데이터 모델과 로컬 저장소\n4. 검증과 오류 처리\n5. 테스트 및 검증 계획\n6. 구현 순서\n\n요구사항:\n- `add`, `list`, `remove`의 정확하고 관찰 가능한 동작을 정의하세요.\n- `add`는 잘못된 URL을 거부하고, 안정적인 북마크 ID를 생성하며, 선택 제목과 태그를 받아야 합니다.\n- `list`는 저장된 북마크를 어떻게 표시하는지 설명해야 합니다.\n- `remove`는 생성된 ID로 삭제하고, 존재하지 않는 ID에는 명확히 실패해야 합니다.\n- 사용자 데이터 디렉터리와 JSON 파일을 선택하고 초기화하는 방법을 설명하세요.\n- 손상된 JSON은 예측 가능하게 처리하고, 손상 데이터를 덮어쓰거나 조용히 버리지 마세요.\n- 검증은 실행 가능해야 합니다. 정상 add/list/remove, 잘못된 URL, 없는 ID, 손상된 JSON에 대한 테스트를 지정하세요.\n- 나열한 각 실패 상황에 대해 기대 결과 또는 오류 메시지/분류를 명시하세요.\n\n제외사항:\n- 구현 코드를 제공하지 마세요.\n- 클라우드 동기화, GUI, 외부 서비스, 서드파티 통합을 포함하지 마세요.\n\n수락 기준:\n- 계획이 `add`, `list`, `remove` 동작을 검사 가능하게 만듭니다.\n- 필수 레코드 필드와 로컬 JSON 영속성을 포함합니다.\n- 잘못된 URL, 없는 ID, 손상된 JSON 실패를 명시적으로 다룹니다.\n- 모든 필수 동작과 실패에 대한 구체적인 검증 증거를 포함합니다.\n```\n\n**Run Instructions**\n\nStart a **Fresh Run** in Codex, paste **only the English Final Prompt**, and keep this exploratory conversation out of the new conversation.\n\nPrompt Budget: 900 English words maximum; the delivered prompt is within budget. Quality Gate: passed—coverage, exclusions, acceptance criteria, verification steps, and the Korean **Review Translation** are aligned.\n\nSuccess checks: confirm the returned Markdown plan defines `add`/`list`/`remove`, local JSON persistence and record fields, predictable invalid-URL/missing-ID/malformed-JSON handling, and concrete tests for each."
+      "assistant": "## English Final Prompt\n\n```text\nCreate a response-only Markdown implementation plan for a fictional offline bookmark manager. You are the planning author; do not implement code, create files, or modify any repository.\n\nContext and inputs:\n- Technology context: Node.js with TypeScript.\n- The manager is an offline CLI only.\n- Required operations: add, list, and remove.\n- Bookmark data: generated ID; required URL; optional title; optional tags.\n- Persist data in one local JSON file located in a suitable per-user application-data directory.\n- Removal is ID-based: remove <id>.\n- No cloud sync, GUI, or external services.\n\nDeliverable:\nReturn one self-contained Markdown plan only. It should be practical enough for a later developer to implement, but must not contain actual implementation work.\n\nRequirements and working rules:\n1. Describe the proposed CLI command interface for add, list, and remove, including arguments and useful output/error behavior.\n2. Define the TypeScript-facing bookmark record and the JSON persistence shape.\n3. Explain how to locate or derive a suitable user data directory across supported operating systems, and how the JSON file is initialized and read safely.\n4. Describe validation and error handling for invalid URLs, missing or unknown IDs, and malformed JSON. Malformed JSON must produce an explicit safe failure and must not silently overwrite existing data.\n5. Break the work into ordered implementation stages, identifying module boundaries and responsibilities.\n6. Include a focused test plan with normal and failure-path cases. Do not assume cloud, a GUI, databases, external APIs, or services.\n7. Keep the scope limited to the stated requirements. Do not add features such as sync, authentication, browser integration, search, import/export, or a graphical interface.\n\nObservable acceptance criteria:\n- Adding a valid URL produces a generated ID and persists the URL plus any supplied title and tags.\n- Listing shows every stored bookmark with an identifiable ID.\n- Removing an existing ID removes that bookmark, and a later list no longer shows it.\n- The plan explicitly covers tests for invalid URLs, missing or unknown IDs, and malformed JSON.\n- The plan is Markdown-only and proposes no source-code or file changes.\n\nVerification and failure handling:\nConclude with a concise verification checklist mapping each acceptance criterion to command-level tests and JSON-state checks. State expected failure behavior for each invalid-input case, including preserving the malformed JSON file unchanged.\n```\n\n## Review Translation\n\n```text\n가상의 오프라인 북마크 관리자를 위한, 응답으로만 제공되는 Markdown 구현 계획을 작성하세요. 당신은 계획 작성자이며, 코드를 구현하거나 파일을 만들거나 저장소를 수정하지 마세요.\n\n컨텍스트와 입력:\n- 기술 맥락: Node.js와 TypeScript.\n- 관리자는 오프라인 CLI 전용입니다.\n- 필수 작업: add, list, remove.\n- 북마크 데이터: 자동 생성 ID, 필수 URL, 선택 title, 선택 tags.\n- 적절한 사용자별 애플리케이션 데이터 디렉터리에 있는 하나의 로컬 JSON 파일에 데이터를 저장합니다.\n- 삭제는 ID 기반입니다: remove <id>.\n- 클라우드 동기화, GUI, 외부 서비스는 없습니다.\n\n산출물:\n하나의 독립적인 Markdown 계획만 반환하세요. 이후 개발자가 구현할 수 있을 만큼 실용적이어야 하지만, 실제 구현 작업을 포함해서는 안 됩니다.\n\n요구사항과 작업 규칙:\n1. 인수와 유용한 출력/오류 동작을 포함해 add, list, remove의 제안 CLI 인터페이스를 설명하세요.\n2. TypeScript 관점의 북마크 레코드와 JSON 영속화 구조를 정의하세요.\n3. 지원 운영체제에서 적절한 사용자 데이터 디렉터리를 찾거나 결정하는 방법과 JSON 파일을 안전하게 초기화하고 읽는 방법을 설명하세요.\n4. 잘못된 URL, 누락되거나 존재하지 않는 ID, 손상된 JSON에 대한 검증과 오류 처리를 설명하세요. 손상된 JSON은 명시적으로 안전하게 실패해야 하며 기존 데이터를 조용히 덮어써서는 안 됩니다.\n5. 모듈 경계와 책임을 식별하며 작업을 순서가 있는 구현 단계로 나누세요.\n6. 정상 및 실패 경로 사례를 포함하는 집중적인 테스트 계획을 작성하세요. 클라우드, GUI, 데이터베이스, 외부 API 또는 서비스를 가정하지 마세요.\n7. 범위를 명시된 요구사항으로 제한하세요. 동기화, 인증, 브라우저 통합, 검색, 가져오기/내보내기, 그래픽 인터페이스 같은 기능을 추가하지 마세요.\n\n관찰 가능한 수용 기준:\n- 유효한 URL을 추가하면 자동 생성 ID가 나오고 URL 및 제공된 title·tags가 저장됩니다.\n- 목록은 식별 가능한 ID와 함께 저장된 모든 북마크를 보여줍니다.\n- 기존 ID를 삭제하면 해당 북마크가 제거되고, 이후 목록에 더는 나타나지 않습니다.\n- 계획은 잘못된 URL, 누락되거나 존재하지 않는 ID, 손상된 JSON에 대한 테스트를 명시적으로 다룹니다.\n- 계획은 Markdown만으로 이루어지며 소스 코드나 파일 변경을 제안하지 않습니다.\n\n검증과 실패 처리:\n각 수용 기준을 명령 수준 테스트와 JSON 상태 확인에 연결하는 간결한 검증 체크리스트로 끝내세요. 손상된 JSON 파일을 변경하지 않고 보존하는 것을 포함해 각 잘못된 입력의 예상 실패 동작을 명시하세요.\n```\n\n## Run Instructions\n\nCodex에서 **Fresh Run**을 시작한 뒤, 위의 **English Final Prompt**만 붙여 넣으세요. 이 탐색 대화와 **Review Translation**은 새 대화에 넣지 마세요.\n\nPrompt Budget: 영어 Final Prompt는 900단어 이하입니다.  \nQuality Gate: 통과 — 승인된 범위, 제외 사항, 수용 기준, 검증·실패 처리를 모두 반영했습니다.\n\n성공 확인:\n\n- `add`의 ID 생성·JSON 저장, `list`의 ID 표시, `remove <id>` 후 목록 제거를 계획에 포함하는지 확인합니다.\n- invalid URL, missing/unknown ID, malformed JSON의 테스트와 안전한 실패 처리가 있는지 확인합니다.\n- 응답이 Markdown 계획만이며 코드·파일 생성, GUI, 클라우드, 외부 서비스를 포함하지 않는지 확인합니다."
     }
   ]
 }

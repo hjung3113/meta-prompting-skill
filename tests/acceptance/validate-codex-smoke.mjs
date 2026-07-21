@@ -1,103 +1,101 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const directory = dirname(fileURLToPath(import.meta.url));
-
-const byPhase = (turns, phase) => turns.filter((turn) => turn.phase === phase);
-const one = (turns, phase) => {
-  const matches = byPhase(turns, phase);
-  assert.equal(matches.length, 1, `expected one ${phase} turn`);
-  return matches[0];
+const stateOrder = [
+  "first-response", "dump-receipt", "dump-complete", "target-tool",
+  "prompt-budget", "clarification-1", "clarification-2", "clarification-3",
+  "clarification-4", "clarification-5", "clarification-6", "alignment", "delivery",
+];
+const sha256 = (value) => createHash("sha256").update(value).digest("hex");
+const artifact = (text, label) => {
+  const labels = /^(?:#{1,6}\s+|\*\*)(English Final Prompt|Review Translation|Run Instructions)(?:\*\*)?\s*$/gim;
+  const headings = [...text.matchAll(labels)];
+  const index = headings.findIndex((match) => match[1].toLowerCase() === label.toLowerCase());
+  assert.notEqual(index, -1, `missing exact ${label} artifact`);
+  const start = headings[index].index + headings[index][0].length;
+  const end = headings[index + 1]?.index ?? text.length;
+  const body = text.slice(start, end);
+  assert.notEqual(body.replace(/[\s`]/g, ""), "", `${label} artifact is empty`);
+  return body;
 };
 
-export function validateObservedConversation(transcript) {
-  const { metadata, turns, approvedState } = transcript;
-  assert.match(metadata.host, /Codex/i);
-  assert.match(metadata.hostVersion, /codex-cli \d+\.\d+\.\d+/);
-  assert.equal(metadata.canonicalSkillPath, "skills/meta-prompt/SKILL.md");
-  assert.match(metadata.canonicalSkillSha256, /^[a-f0-9]{64}$/);
-  assert.match(metadata.discovery, /fresh temporary git project/i);
-  assert.match(metadata.command, /^codex exec .*\$meta-prompt/);
-  assert.match(metadata.threadId, /^[0-9a-f]{8}-[0-9a-f-]{27}$/i);
-  assert.equal(metadata.result, "PASS");
-  assert.equal(turns[0].phase, "introduction");
-  for (let index = 0; index < turns.length; index += 1) {
-    assert.equal(turns[index].role, index % 2 === 0 ? "assistant" : "user", "roles must alternate");
+export function validateEvidence({ transcript, manifest, rawFiles = [] }) {
+  assert.equal(manifest.nextIndex, stateOrder.length, "manifest must capture every required state");
+  assert.equal(manifest.entries.length, stateOrder.length, "manifest must have 13 raw entries");
+  for (const field of ["supportedModel", "captureUtc", "hostVersion", "threadId", "skillSha256", "derivedSha256"]) {
+    assert.equal(typeof manifest[field], "string", `missing provenance: ${field}`);
+    assert.notEqual(manifest[field], "", `empty provenance: ${field}`);
   }
-  for (const field of Object.keys(approvedState)) {
-    assert.notEqual(approvedState[field], "", `approved field ${field} is required`);
-    assert.doesNotMatch(approvedState[field], /\bTBD\b/i);
+  assert.match(manifest.supportedModel, /^gpt-[a-z0-9.-]+$/i, "unsupported or missing model provenance");
+  assert.ok(Number.isFinite(Date.parse(manifest.captureUtc)) && /Z$/i.test(manifest.captureUtc), "capture timestamp must be UTC ISO-8601");
+  assert.match(manifest.hostVersion, /^codex-cli \d+\.\d+\.\d+/, "missing CLI version provenance");
+  assert.match(manifest.threadId, /^[0-9a-f-]{36}$/i, "missing thread provenance");
+  assert.match(manifest.skillSha256, /^[a-f0-9]{64}$/, "missing skill hash provenance");
+  assert.match(manifest.derivedSha256, /^[a-f0-9]{64}$/, "missing derived hash provenance");
+  assert.equal(manifest.derivedSha256, sha256(JSON.stringify(transcript, null, 2)), "derived transcript hash mismatch");
+  assert.deepEqual(Object.keys(transcript), ["turns"], "derived transcript must contain only turns");
+  assert.equal(transcript.turns.length, stateOrder.length, "exact 13-state transcript required");
+  for (const [index, turn] of transcript.turns.entries()) {
+    assert.deepEqual(Object.keys(turn), ["index", "user", "assistant"], "turns use only {index,user,assistant}");
+    assert.equal(turn.index, index, `state order index mismatch at ${stateOrder[index]}`);
+    assert.equal(typeof turn.assistant, "string");
+    assert.ok(turn.assistant.trim(), `empty assistant response at ${stateOrder[index]}`);
+    if (index === 0) assert.equal(turn.user, null);
+    else assert.equal(typeof turn.user, "string");
   }
-
-  const receipt = one(turns, "receipt");
-  assert.match(receipt.text, /덤프 끝|dump complete/i);
-  assert.doesNotMatch(receipt.text, /plan|design|implement|final prompt/i);
-
-  const target = one(turns, "target-tool");
-  assert.match(target.text, /Codex/i);
-  assert.match(target.text, /recommend|권장/i);
-  assert.doesNotMatch(target.text, /900 English words/i);
-  const targetIndex = turns.indexOf(target);
-  assert.equal(turns[targetIndex + 1].phase, "target-tool-response");
-  assert.match(turns[targetIndex + 1].text, /Codex/);
-  assert.doesNotMatch(turns[targetIndex + 1].text, /do not confirm|later/i);
-
-  const budget = one(turns, "prompt-budget");
-  assert.match(budget.text, /900 English words/i);
-  assert.match(budget.text, /recommend|권장/i);
-  const budgetIndex = turns.indexOf(budget);
-  assert.equal(turns[budgetIndex + 1].phase, "prompt-budget-response");
-  assert.match(turns[budgetIndex + 1].text, /900 English words/i);
-  assert.doesNotMatch(turns[budgetIndex + 1].text, /do not confirm|later/i);
-
-  const clarifications = byPhase(turns, "clarification");
-  assert.ok(clarifications.length >= 1, "requires a clarification turn");
-  for (const question of clarifications) {
-    assert.match(question.text, /recommend|권장/i);
-    assert.match(question.text, /\?/);
-    assert.equal((question.text.match(/\?/g) ?? []).length, 1, "one decision per turn");
-    assert.equal(turns[turns.indexOf(question) + 1].phase, "clarification-response");
+  for (const [index, entry] of manifest.entries.entries()) {
+    assert.equal(entry.index, index, "manifest entry order mismatch");
+    assert.equal(entry.status, 0, `raw capture failed at ${index}`);
+    assert.match(entry.sha256, /^[a-f0-9]{64}$/);
+    if (rawFiles.length) assert.equal(entry.sha256, sha256(rawFiles[index]), `raw hash mismatch: ${entry.raw}`);
   }
 
-  const alignment = one(turns, "alignment");
-  assert.match(alignment.text, /Alignment Gate/i);
-  assert.match(alignment.text, /Acceptance Criter/i);
-  assert.match(alignment.text, /approve/i);
-  assert.doesNotMatch(alignment.text, /### English Final Prompt/i);
-  for (const field of ["Goal", "Deliverable", "scope", "exclusions", "Constraints", "Acceptance Criteria", "Failure", "Remaining assumptions"]) {
-    assert.match(alignment.text, new RegExp(field, "i"));
+  const turns = transcript.turns;
+  assert.match(turns[0].assistant, /Context Dump/i);
+  assert.match(turns[0].assistant, /덤프 끝|dump complete/i);
+  assert.match(turns[0].assistant, /receipt|수신 확인/i);
+  assert.match(turns[1].assistant, /dump complete|덤프 끝/i);
+  assert.doesNotMatch(turns[1].assistant, /plan|design|implement|final prompt/i, "analysis before dump signal");
+  assert.match(turns[2].user, /덤프 끝|dump complete/i);
+  assert.match(turns[2].assistant, /Target Tool/i);
+  assert.match(turns[2].assistant, /recommend|권장/i);
+  assert.match(turns[3].assistant, /Prompt Budget/i);
+  assert.match(turns[3].assistant, /900\s*(?:English\s+words|words|단어)/i);
+  for (const turn of turns.slice(4, 10)) {
+    assert.match(turn.assistant, /recommend|권장/i, "each decision needs a recommendation");
+    assert.equal((turn.assistant.match(/\?/g) ?? []).length, 1, "one decision at a time");
   }
-  const alignmentIndex = turns.indexOf(alignment);
-  assert.equal(turns[alignmentIndex + 1].phase, "alignment-approval");
-  assert.match(turns[alignmentIndex + 1].text, /^approve$/i);
-
-  const delivery = one(turns, "delivery");
-  assert.match(delivery.text, /Quality Gate:\s*\*\*Passed\*\*/i);
-  const english = delivery.text.indexOf("### English Final Prompt");
-  const translation = delivery.text.indexOf("### Review Translation");
-  const runInstructions = delivery.text.indexOf("### Run Instructions");
-  assert.ok(
-    english >= 0 && english < translation && translation < runInstructions,
-    "delivery artifacts must be separate and ordered",
-  );
-  assert.match(delivery.text, /Fresh Run/i);
-  assert.match(delivery.text, /only the English Final Prompt/i);
-  for (const turn of turns.slice(0, alignmentIndex + 1)) {
-    assert.doesNotMatch(turn.text, /### English Final Prompt/i, "Final Prompt cannot precede approval");
-  }
-  for (const required of ["Node.js", "TypeScript", "add", "list", "remove", "cloud", "URL", "malformed"]) {
-    assert.match(delivery.text, new RegExp(required, "i"), `delivery must preserve ${required}`);
-  }
-  assert.match(delivery.text, /ID disappears.*JSON reflects/i);
+  const alignment = turns[11];
+  assert.match(alignment.assistant, /Alignment Gate/i);
+  for (const field of ["Goal", "Deliverable", "scope", "exclusions", "Constraints", "Acceptance Criteria", "Failure", "Remaining assumptions"]) assert.match(alignment.assistant, new RegExp(field, "i"));
+  assert.doesNotMatch(alignment.assistant, /\bTBD\b/i, "alignment is incomplete");
+  assert.match(alignment.assistant, /approve/i);
+  assert.match(turns[12].user, /^approve$/i, "approval must be preserved exactly");
+  for (const turn of turns.slice(0, 12)) assert.doesNotMatch(turn.assistant, /English Final Prompt/i, "premature final prompt");
+  const delivery = turns[12].assistant;
+  const english = artifact(delivery, "English Final Prompt");
+  const translation = artifact(delivery, "Review Translation");
+  const instructions = artifact(delivery, "Run Instructions");
+  assert.ok(delivery.indexOf("English Final Prompt") < delivery.indexOf("Review Translation") && delivery.indexOf("Review Translation") < delivery.indexOf("Run Instructions"), "artifact label order drift");
+  assert.match(instructions, /Fresh Run/i);
+  assert.match(instructions, /only the English Final Prompt|English Final Prompt\*\*만/i);
+  for (const required of ["Node.js", "TypeScript", "add", "list", "remove", "cloud", "URL", "malformed"]) assert.match(english, new RegExp(required, "i"), `English Final Prompt misses ${required}`);
+  assert.match(translation, /Node\.js|TypeScript/i, "translation does not render final prompt");
+  assert.match(delivery, /Quality Gate:\s*(?:\*\*)?(?:Passed|통과)/i, "Quality Gate did not pass");
+  assert.match(instructions, /invalid URL|잘못된 URL/i);
+  assert.match(instructions, /missing(?:\/unknown)? ID|없는 ID/i);
+  assert.match(instructions, /malformed JSON|손상된 JSON/i);
   return { status: "PASS", observedTurnCount: turns.length };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const transcript = JSON.parse(
-    await readFile(resolve(directory, "codex-smoke-transcript.json"), "utf8"),
-  );
-  const result = validateObservedConversation(transcript);
+  const evidence = resolve(directory, "evidence");
+  const [transcript, manifest] = await Promise.all(["derived-transcript.json", "manifest.json"].map(async (file) => JSON.parse(await readFile(resolve(evidence, file), "utf8"))));
+  const rawFiles = await Promise.all(manifest.entries.map((entry) => readFile(resolve(evidence, "raw", entry.raw))));
+  const result = validateEvidence({ transcript, manifest, rawFiles });
   console.log(`observed Codex smoke transcript: ${result.status} (${result.observedTurnCount} turns)`);
 }

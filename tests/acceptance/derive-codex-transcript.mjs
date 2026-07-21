@@ -3,16 +3,21 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const evidence = resolve(import.meta.dirname, "evidence");
-const manifest = JSON.parse(readFileSync(resolve(evidence, "manifest.json"), "utf8"));
+const manifestPath = resolve(evidence, "manifest.json");
+const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const hash = (value) => createHash("sha256").update(value).digest("hex");
-const turns = manifest.entries.map((entry) => {
+const turns = manifest.entries.map((entry, index) => {
+  if (entry.index !== index || entry.status !== 0) throw new Error(`invalid entry ${index}`);
   const raw = readFileSync(resolve(evidence, "raw", entry.raw));
-  if (hash(raw) !== entry.sha256 || entry.status !== 0) throw new Error(`invalid ${entry.raw}`);
+  if (hash(raw) !== entry.sha256) throw new Error(`raw hash mismatch: ${entry.raw}`);
   const lines = raw.toString().split("\n").filter(Boolean).map(JSON.parse);
-  const message = lines.find((line) => line.type === "item.completed" && line.item?.type === "agent_message")?.item.text;
-  if (!message) throw new Error(`missing assistant output ${entry.raw}`);
-  return { index: entry.index, user: entry.index ? entry.args.at(-1) : null, assistant: message };
+  const assistant = lines.find((line) => line.type === "item.completed" && line.item?.type === "agent_message")?.item.text;
+  if (!assistant) throw new Error(`missing assistant output: ${entry.raw}`);
+  return { index, user: index ? entry.args.at(-1) : null, assistant };
 });
-const output = { provenance: { threadId: manifest.threadId, hostVersion: manifest.hostVersion, skillSha256: manifest.skillSha256, rawManifestSha256: hash(readFileSync(resolve(evidence, "manifest.json"))), redactions: manifest.redactions }, turns };
-const target = resolve(evidence, "derived-transcript.json"); writeFileSync(target, JSON.stringify(output, null, 2));
-console.log(`${hash(readFileSync(target))} ${target}`);
+const output = { turns };
+const target = resolve(evidence, "derived-transcript.json");
+writeFileSync(target, `${JSON.stringify(output, null, 2)}\n`);
+manifest.derivedSha256 = hash(JSON.stringify(output, null, 2));
+writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+console.log(`${manifest.derivedSha256} ${target}`);
