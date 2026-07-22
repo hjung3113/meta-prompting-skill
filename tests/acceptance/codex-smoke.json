@@ -1,0 +1,11 @@
+{
+  "tool": "codex-cli",
+  "version": "0.144.6",
+  "verifiedAt": "2026-07-22",
+  "installation": "adapters/codex/install.sh <clean-project>",
+  "invocation": "$meta-prompt",
+  "pluginInstallation": "codex plugin marketplace add <repository>; codex plugin add meta-prompt@meta-prompting-skill",
+  "scenario": "Install the canonical skill into a clean project, start a Fresh Run, and explicitly invoke Meta-Prompt for the happy-path Context Dump.",
+  "result": "PASS: the installer created a symlink to the canonical skill, Codex accepted the explicit invocation, and the local marketplace installed the secondary plugin.",
+  "limitations": "Implicit selection and plugin availability are not guaranteed; use explicit invocation and disclose unavailable plugin or Context Asset access in Run Instructions."
+}

@@ -4,6 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateStaticSkillContract } from "./acceptance/validate-static-contract.mjs";
 import { validateObservedTranscript } from "./acceptance/validate-observed-transcript.mjs";
+import { validateCodexAdapter } from "./acceptance/validate-codex-adapter.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [skill, observed] = await Promise.all([
@@ -13,4 +14,5 @@ const [skill, observed] = await Promise.all([
 
 assert.equal(validateStaticSkillContract(skill).status, "PASS");
 assert.equal(validateObservedTranscript(JSON.parse(observed).turns).status, "PASS");
+assert.equal((await validateCodexAdapter()).status, "PASS");
 console.log("meta-prompt Issue 2 contract: PASS");
