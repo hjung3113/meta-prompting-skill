@@ -1,24 +1,40 @@
 # Development scope control
 
-This development-only guide bounds issue implementation and review work. It
-does not change product behavior or the `meta-prompt` skill.
+This development-only guide keeps issue work faithful to its approved scope.
+It does not change product behavior or the `meta-prompt` skill.
 
 ## Incident cause
 
-The evidence-system overbuild came from unbounded “review until clean” wording,
-no definition of a material blocker, no iteration or token stop rule,
-release-level invariants applied to one issue, and reviewers creating new
-requirements.
+“Review until clean” let reviewers redefine “clean” because scope invariance
+and a finding-to-criterion mapping gate were missing.
 
 ## Mandatory prompt contract
 
-- The live issue and its approved acceptance criteria are the scope authority.
-- Only a direct acceptance failure, security or data-loss defect, or false or
-  unrunnable claimed evidence can block completion. All other findings become
-  follow-ups.
-- Default per issue: one Terra implementation, one Sol review, and at most one
-  Terra remediation.
-- Any extra review loop, parallel reviewer, adversarial expansion, or new
-  acceptance requirement needs explicit user approval.
-- The coordinator must set a bounded task contract and stop when the approved
-  criteria pass.
+- Bounded issue prompts must explicitly state: (1) the problem and intended
+  outcome; (2) in-scope deliverables and allowed changed surfaces or files;
+  (3) explicit exclusions and non-goals; (4) minimum sufficient evidence per
+  Acceptance Criterion; (5) which findings may block versus become follow-ups;
+  and (6) the stop condition when the original criteria are proven.
+- The live issue, its dependencies, and explicitly approved Acceptance Criteria
+  are the immutable scope authority.
+- Every implementation change, test, review finding, and completion blocker
+  must map directly to a named criterion or an explicitly authorized
+  cross-cutting constraint.
+- Reviewers may discover defects but may not create new requirements.
+- Unmapped improvements, hardening ideas, speculative risks, and release-level
+  invariants must be archived or filed as follow-ups; do not add them to the
+  current branch or use them as a gate.
+- Evidence must be proportional: use the minimum sufficient to demonstrate the
+  criterion, not a new system for defending evidence itself.
+- A material regression introduced by the current diff may block only when its
+  impact is concrete and within the changed surface.
+- Any scope expansion requires explicit user approval.
+- Review and remediation may repeat as needed inside this fixed scope and stop
+  once the scoped criteria pass.
+
+## Preflight and proportionality
+
+Before work, map every planned artifact and change to a named Acceptance
+Criterion. Orphan changes are prohibited unless the user explicitly approves a
+scope expansion. Keep solutions proportional: do not create a new subsystem
+when a direct check proves the criterion.
