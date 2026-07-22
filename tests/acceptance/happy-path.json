@@ -1,0 +1,10 @@
+{
+  "name": "Issue 2 happy path",
+  "steps": [
+    "Teach the multi-message Context Dump and completion signal.",
+    "Receipt-only acknowledge each dump message until dump complete.",
+    "Ask recommended decisions one at a time.",
+    "Present observable Acceptance Criteria in an approved Alignment Gate.",
+    "Deliver English Final Prompt, Review Translation, and Fresh Run instructions."
+  ]
+}

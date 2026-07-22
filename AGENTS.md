@@ -13,3 +13,7 @@ Use the five default Matt Pocock triage labels. See `docs/agents/triage-labels.m
 ### Domain docs
 
 This repository uses a single-context domain-doc layout. See `docs/agents/domain.md`.
+
+### Development scope control
+
+For issue implementation and review limits, see `docs/agents/scope-control.md`.
