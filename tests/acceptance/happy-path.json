@@ -4,7 +4,8 @@
     "Teach the multi-message Context Dump and completion signal.",
     "Receipt-only acknowledge each dump message until dump complete.",
     "Ask recommended decisions one at a time.",
-    "Present observable Acceptance Criteria in an approved Alignment Gate.",
+    "Present an approved Alignment Gate with the Execution Scope Contract and observable Acceptance Criteria.",
+    "Keep unmapped hardening as a follow-up and require explicit approval for scope expansion.",
     "Deliver English Final Prompt, Review Translation, and Fresh Run instructions."
   ]
 }

@@ -21,10 +21,19 @@ export function validateObservedTranscript(turns) {
   const gate = turns.find((turn) => /Alignment Gate/.test(turn.assistant));
   assert.ok(gate, "Alignment Gate is present");
   assert.match(gate.assistant, /Acceptance Criteria:.*observable/i, "gate has observable acceptance criteria");
+  assert.match(gate.assistant, /In scope:/i, "gate records in-scope work");
+  assert.match(gate.assistant, /Exclusions:/i, "gate records exclusions");
+  assert.match(gate.assistant, /Minimum evidence:/i, "gate records proportional evidence");
+  assert.match(gate.assistant, /Stop condition:/i, "gate records its stop condition");
   assert.match(gate.assistant, /approve/i, "gate requests approval");
   const delivery = turns.at(-1).assistant;
   assert.deepEqual(labels.map((label) => delivery.indexOf(label)), [...labels.map((label) => delivery.indexOf(label))].sort((a, b) => a - b), "delivery order");
   for (const label of labels) assert.ok(delivery.includes(label), `delivery includes ${label}`);
+  assert.match(delivery, /Execution Scope Contract/i, "delivery has the scope contract");
+  assert.match(delivery, /mapped to the approved Acceptance Criteria/i, "scope contract maps current work to approved criteria");
+  assert.match(delivery, /follow-up suggestions/i, "scope contract routes unmapped work to follow-up");
+  assert.match(delivery, /changed surface may block/i, "scope contract retains concrete-regression blocking");
+  assert.match(delivery, /explicit user approval/i, "scope contract requires approval for expansion");
   assert.match(delivery, /Fresh Run/);
   return { status: "PASS", turnCount: turns.length };
 }
