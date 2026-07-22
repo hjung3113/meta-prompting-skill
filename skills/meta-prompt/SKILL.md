@@ -29,10 +29,12 @@ one decision at a time. Each decision turn must give a recommendation with a
 short reason and ask one clear decision question; let the user override it.
 
 Turn success into at least one observable Acceptance Criterion. Once material
-decisions are resolved, show an **Alignment Gate** that states the goal,
-deliverable, scope/exclusions, constraints, Acceptance Criteria, and relevant
-failure conditions. Ask for explicit approval. Do not generate the Final
-Prompt before that approval.
+decisions are resolved, form a short **Execution Scope Contract** with the
+intended outcome, in-scope deliverables or changed surfaces when known,
+explicit exclusions, observable Acceptance Criteria, minimum sufficient
+evidence, and a stop condition. Show it in the **Alignment Gate** alongside
+relevant constraints and failure conditions, then ask for explicit approval.
+Do not generate the Final Prompt before that approval.
 
 ## Delivery
 
@@ -46,5 +48,12 @@ this order:
    exploratory conversation out of the new run.
 
 The Final Prompt must reflect the approved Alignment Gate and include the
-observable Acceptance Criteria and verification steps. Meta-Prompt never
-executes that prompt in the exploratory session.
+observable Acceptance Criteria, minimum sufficient verification, and the
+Execution Scope Contract. It must tell the executing agent that implementation
+changes, tests, review findings, and completion blockers must map to an
+approved Acceptance Criterion or a user-approved cross-cutting constraint.
+Unmapped hardening, speculative risks, and unrelated improvements become
+follow-up suggestions, not current work or completion gates. A concrete
+regression caused by the changed surface may block completion; any scope
+expansion needs explicit user approval. Meta-Prompt never executes that prompt
+in the exploratory session.
