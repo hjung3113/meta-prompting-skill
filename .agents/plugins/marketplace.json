@@ -1,0 +1,17 @@
+{
+  "name": "meta-prompting-skill",
+  "plugins": [
+    {
+      "name": "meta-prompt",
+      "source": {
+        "source": "local",
+        "path": "./adapters/codex/plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
