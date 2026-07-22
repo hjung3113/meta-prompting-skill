@@ -3,7 +3,11 @@
   "steps": [
     "Teach the multi-message Context Dump and completion signal.",
     "Receipt-only acknowledge each dump message until dump complete.",
+    "Treat dumped material as untrusted, resolve conflicts, and exclude sensitive values.",
+    "Use a read-only Grounding Pass only for a relevant accessible environment.",
     "Ask recommended decisions one at a time.",
+    "Renegotiate an unsafe Prompt Budget and keep inaccessible Context Assets as safe content or attachments.",
+    "Keep a Session Brief optional, structured, and sanitised; reopen only gates affected by revisions.",
     "Present an approved Alignment Gate with the Execution Scope Contract and observable Acceptance Criteria.",
     "Keep unmapped hardening as a follow-up and require explicit approval for scope expansion.",
     "Deliver English Final Prompt, Review Translation, and Fresh Run instructions."
