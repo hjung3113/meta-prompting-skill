@@ -1,2 +1,0 @@
-2026-07-21T21:45:18.027193Z ERROR codex_models_manager::cache: failed to load models cache: missing field `supports_reasoning_summaries` at line 88 column 5
-2026-07-21T21:45:21.314040Z ERROR codex_models_manager::cache: failed to load models cache: missing field `supports_reasoning_summaries` at line 88 column 5
