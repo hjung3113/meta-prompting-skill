@@ -1,0 +1,9 @@
+{
+  "turns": [
+    {"assistant":"Use a multi-message Context Dump. End it with `dump complete` (or `덤프 끝`). Until then I use receipt-only acknowledgements; send the first part."},
+    {"user":"Create a small CLI task plan.","assistant":"Received. Please continue the Context Dump or send `dump complete`."},
+    {"user":"dump complete","assistant":"The Context Dump is closed. Recommendation: use Codex because it can execute the final task. Should Codex be the Target Tool?"},
+    {"user":"Yes.","assistant":"Alignment Gate\nGoal: create a CLI task plan.\nAcceptance Criteria: observable checks confirm the plan covers the requested task.\nReply `approve` to authorize delivery."},
+    {"user":"approve","assistant":"English Final Prompt\nCreate the approved CLI task plan and verify the observable Acceptance Criteria.\n\nReview Translation\n승인된 CLI 작업 계획과 관찰 가능한 수용 기준을 검토합니다.\n\nRun Instructions\nStart a Fresh Run in Codex and paste only the English Final Prompt."}
+  ]
+}

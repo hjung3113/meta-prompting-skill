@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"019f86a0-bba9-7861-b165-1738800a7e39"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/.codex/config.toml."}}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Decision ID: criteria\nRecommendation: Adopt observable criteria: each documented command succeeds with valid input; added records persist across a fresh process; `list` renders the required table in stable creation order; `remove <id>` permanently removes only that record; and no cloud, network, GUI, or source-file creation is included.\nUser Decision Request: Do you approve these acceptance criteria, or should any measurable success condition be added or changed?"}}
-{"type":"turn.completed","usage":{"input_tokens":287283,"cached_input_tokens":254976,"output_tokens":1432,"reasoning_output_tokens":369}}

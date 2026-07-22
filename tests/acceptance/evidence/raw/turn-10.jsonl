@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"019f86a0-bba9-7861-b165-1738800a7e39"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/.codex/config.toml."}}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Decision ID: list\nRecommendation: Make `bookmarks list` print every saved bookmark in deterministic creation order, one compact human-readable row per bookmark with ID, title-or-URL, URL, and tags; return a success response for an empty collection with a clear “no bookmarks” message.\nUser Decision Request: Do you approve this list behavior, or should the default ordering and output fields differ?"}}
-{"type":"turn.completed","usage":{"input_tokens":262481,"cached_input_tokens":230656,"output_tokens":1326,"reasoning_output_tokens":356}}

@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"019f86a0-bba9-7861-b165-1738800a7e39"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/.codex/config.toml."}}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Decision ID: budget\nRecommendation: Set a 1,200-word maximum for the English Final Prompt; this is a practical recommendation for a self-contained plan request in Codex, which has no confirmed prompt limit here.\nUser Decision Request: Do you approve a 1,200-word English Final Prompt budget, or want a different limit/counting rule?"}}
-{"type":"turn.completed","usage":{"input_tokens":93226,"cached_input_tokens":78848,"output_tokens":492,"reasoning_output_tokens":134}}

@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"019f86a0-bba9-7861-b165-1738800a7e39"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/.codex/config.toml."}}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Decision ID: interface\nRecommendation: Use a command-oriented Node.js CLI with positional commands and named options, since this keeps the offline tool scriptable and avoids a GUI.\nUser Decision Request: Do you approve a CLI shaped like `bookmarks add <url>`, `bookmarks list`, and `bookmarks remove <id-or-url>`, with named options where needed?"}}
-{"type":"turn.completed","usage":{"input_tokens":140872,"cached_input_tokens":125440,"output_tokens":711,"reasoning_output_tokens":188}}

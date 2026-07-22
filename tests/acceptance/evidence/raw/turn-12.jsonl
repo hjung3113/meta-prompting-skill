@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"019f86a0-bba9-7861-b165-1738800a7e39"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: chronicle. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/hyojung/.codex/config.toml."}}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Decision ID: failures\nRecommendation: Fail with a nonzero exit code and concise actionable stderr message for an invalid URL, missing required arguments, unknown command, unknown bookmark ID, unreadable storage, or malformed JSON; do not silently repair or overwrite malformed data.\nUser Decision Request: Do you approve these failure rules, or should any error be handled differently?"}}
-{"type":"turn.completed","usage":{"input_tokens":312212,"cached_input_tokens":279296,"output_tokens":1523,"reasoning_output_tokens":383}}
