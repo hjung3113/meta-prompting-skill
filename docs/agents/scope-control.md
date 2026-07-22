@@ -3,6 +3,8 @@
 This development-only guide keeps issue work faithful to its approved scope.
 It does not change product behavior or the `meta-prompt` skill.
 
+It operationalizes [ADR-0002: Issue scope is an invariant](../adr/0002-issue-scope-is-an-invariant.md).
+
 ## Incident cause
 
 “Review until clean” let reviewers redefine “clean” because scope invariance
