@@ -1,0 +1,5 @@
+{
+  "name": "meta-prompt",
+  "version": "0.1.0",
+  "description": "Turn a Context Dump into an approved execution-ready prompt."
+}
