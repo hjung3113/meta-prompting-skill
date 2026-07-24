@@ -1,0 +1,11 @@
+{
+  "tool": "claude-code",
+  "version": "2.1.218",
+  "verifiedAt": "2026-07-25",
+  "installation": "adapters/claude/install.sh <clean-project>",
+  "invocation": "/meta-prompt",
+  "pluginInvocation": "/meta-prompt:meta-prompt",
+  "scenario": "Installed the canonical skill into a clean project and invoked /meta-prompt in a non-persistent Fresh Run; separately loaded adapters/claude/plugin with --plugin-dir and invoked /meta-prompt:meta-prompt in a non-persistent Fresh Run.",
+  "result": "PASS: Claude Code 2.1.218 accepted both explicit invocations and returned the Context Dump guidance; the direct installer created a symlink to the canonical skill, and `claude --plugin-dir ... plugin details meta-prompt` registered one plugin skill.",
+  "limitations": "The plugin was verified through the local --plugin-dir development path only. Current plugin documentation limits external symlinks during local loading and cache installation, so this is not a portable marketplace-install guarantee; use the direct project skill and disclose unavailable plugin access in Run Instructions."
+}
