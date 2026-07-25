@@ -1,0 +1,10 @@
+{
+  "tool": "opencode",
+  "version": "1.17.13",
+  "verifiedAt": "2026-07-26",
+  "installation": "adapters/opencode/install.sh <clean-git-project>",
+  "invocation": "Ask OpenCode to use the meta-prompt skill",
+  "scenario": "Installed the canonical skill into a clean Git project, started a Fresh Run, and requested that OpenCode use meta-prompt for the Context Dump scenario.",
+  "result": "PARTIAL: OpenCode 1.17.13 discovered the canonical skill at .opencode/skills/meta-prompt/SKILL.md. The Fresh Run invocation reached the configured default Z.AI model, but the provider returned an insufficient-balance error before any skill behavior could be observed.",
+  "limitations": "Agent behavior is not verified until a configured provider can complete the Fresh Run. OpenCode permission.skill can also be ask or deny; approve a requested meta-prompt load when it is ask, and do not claim the skill loaded when it is deny."
+}
