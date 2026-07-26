@@ -61,7 +61,7 @@ function parseFrontmatter(skill) {
 }
 
 async function assertDocumentationLinks() {
-  for (const documentPath of ["README.md", "docs/installation.md"]) {
+  for (const documentPath of ["README.md", "docs/installation.md", "docs/release-checklist.md"]) {
     const absolutePath = resolve(root, documentPath);
     const document = await readFile(absolutePath, "utf8");
     const links = [...document.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]);
@@ -190,7 +190,7 @@ async function assertAdapterMetadata() {
 
 async function assertDeterministicCi() {
   const workflow = await readFile(resolve(root, ".github/workflows/cross-tool-contract.yml"), "utf8");
-  assert.match(workflow, /node tests\/acceptance\/validate-cross-tool-contract\.mjs/);
+  assert.match(workflow, /node tests\/acceptance\/validate-release-candidate\.mjs/);
   assert.doesNotMatch(workflow, /\b(?:codex|claude|opencode)\s+run\b/i);
 }
 
