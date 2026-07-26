@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateCrossToolContract } from "./validate-cross-tool-contract.mjs";
+import { validateFieldEvaluation } from "./validate-field-evaluation.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const smokeRecords = [
@@ -61,6 +62,7 @@ export async function validateReleaseCandidate() {
   }
 
   await validateCrossToolContract();
+  await validateFieldEvaluation();
   return { status: "PASS", completionCriteria: completionCriteria.length };
 }
 

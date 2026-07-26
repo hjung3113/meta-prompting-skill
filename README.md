@@ -64,6 +64,13 @@ exploratory conversation.
   Fresh-Run smoke records for the three First-Class Tools are retained under
   [`tests/acceptance`](tests/acceptance/README.md).
 
+## Field Evaluation
+
+After a completed Fresh Run, you may optionally submit a sanitised
+[Field Evaluation](docs/field-evaluation.md) report. It is development-only,
+requires your approval before publication, and does not collect telemetry or
+change the normal Meta-Prompt workflow.
+
 ## Update
 
 Pull the latest repository revision, then rerun the installer for a project
