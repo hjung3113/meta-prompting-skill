@@ -44,20 +44,23 @@ export async function validateOpenCodeAdapter() {
   assert.match(profile, /https:\/\/opencode\.ai\/docs\/permissions/);
   assert.match(profile, /\.opencode\/skills/);
   assert.match(profile, /native `skill`\s+tool/);
-  assert.match(profile, /does not claim a slash command/i);
+  assert.match(profile, /does\s+not claim a slash\s+command/i);
   assert.match(profile, /permission\.skill/);
+  assert.match(profile, /zai-coding-plan\/glm-5\.2/);
+  assert.match(profile, /receipt-only Context Dump guidance/);
   assert.match(installer, /ln -s/);
   assert.match(installer, /skills\/meta-prompt/);
   assert.match(skill, /^---\nname: meta-prompt\ndescription: .+\n---/);
   assert.equal(smoke.tool, "opencode");
-  assert.match(smoke.version, /^\d+\.\d+\.\d+$/);
+  assert.equal(smoke.version, "1.18.5");
   assert.equal(smoke.verifiedAt, "2026-07-26");
   assert.match(smoke.installation, /install\.sh/);
   assert.match(smoke.invocation, /meta-prompt/);
   assert.match(smoke.scenario, /Fresh Run/);
-  assert.match(smoke.result, /^(PASS|PARTIAL):/);
+  assert.equal(smoke.exitCode, 0);
+  assert.match(smoke.result, /^PASS:/);
   assert.match(smoke.limitations, /permission\.skill/);
-  assert.match(smoke.limitations, /not verified/i);
+  assert.match(smoke.limitations, /--model zai/);
   await assertCleanProjectInstall();
   return { status: "PASS" };
 }

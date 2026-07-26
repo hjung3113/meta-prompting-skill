@@ -20,12 +20,12 @@ Last verified: 2026-07-26
   canonical `skills/meta-prompt` directory into a clean project's
   `.opencode/skills/meta-prompt` location. The canonical source remains
   `skills/meta-prompt/SKILL.md` in this repository.
-- OpenCode 1.17.13 discovered that symlinked skill at
+- OpenCode 1.18.5 discovered that symlinked skill at
   `.opencode/skills/meta-prompt/SKILL.md` in a clean Git project. In a Fresh
-  Run, ask OpenCode to use the `meta-prompt` skill; OpenCode exposes available
-  skills to the agent and loads the selected skill through its native `skill`
-  tool. This adapter does not claim a slash command or automatic selection for
-  unrelated requests.
+  Run on the default `zai-coding-plan/glm-5.2` route, asking OpenCode to use
+  `meta-prompt` loaded the selected skill through its native `skill` tool and
+  returned the required receipt-only Context Dump guidance. This adapter does
+  not claim a slash command or automatic selection for unrelated requests.
 - The canonical `meta-prompt` name and its required `name` and `description`
   frontmatter satisfy the documented OpenCode skill contract.
 
@@ -37,9 +37,9 @@ Last verified: 2026-07-26
   than claiming the skill loaded.
 - Start a Fresh Run after installation. Do not claim that installation changes
   an already-running conversation.
-- The 2026-07-26 Fresh Run reached the configured Z.AI model but could not
-  observe skill behavior because the provider reported insufficient balance.
-  Treat agent behavior as unverified until a configured provider completes the
-  scenario successfully.
+- The 2026-07-26 Fresh Run passed on OpenCode 1.18.5's default
+  `zai-coding-plan/glm-5.2` route. A `--model zai/...` override selects the raw
+  Z.AI provider instead; do not treat that provider's balance or rate-limit
+  errors as a failure of the default adapter route.
 - Run Instructions must name any Context Asset that the Target Tool cannot
   access as a required attachment rather than promising unsupported access.
