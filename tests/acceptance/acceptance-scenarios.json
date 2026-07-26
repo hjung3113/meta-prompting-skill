@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "canonicalSkill": "skills/meta-prompt/SKILL.md",
+  "firstClassTools": ["codex-cli", "claude-code", "opencode"],
+  "applications": [
+    {"tool": "codex-cli", "adapter": "adapters/codex", "installedPath": ".agents/skills/meta-prompt", "smokeRecord": "tests/acceptance/codex-smoke.json"},
+    {"tool": "claude-code", "adapter": "adapters/claude", "installedPath": ".claude/skills/meta-prompt", "smokeRecord": "tests/acceptance/claude-smoke.json"},
+    {"tool": "opencode", "adapter": "adapters/opencode", "installedPath": ".opencode/skills/meta-prompt", "smokeRecord": "tests/acceptance/opencode-smoke.json"}
+  ],
+  "scenarios": [
+    {
+      "id": "first-use-context-dump",
+      "criterion": "A first-time user is explicitly told how to dump context and how to signal completion.",
+      "observableOutcome": "The first response explains Context Dump and names `dump complete` or `덤프 끝`."
+    },
+    {
+      "id": "receipt-before-completion",
+      "criterion": "No analysis, design, or generation occurs before the Dump Complete Signal.",
+      "observableOutcome": "An open Context Dump receives only a receipt and an invitation to continue or complete it."
+    },
+    {
+      "id": "one-recommended-decision",
+      "criterion": "Clarification asks one decision at a time and includes a recommended answer.",
+      "observableOutcome": "Each clarification turn has one decision question and a recommendation."
+    },
+    {
+      "id": "approved-alignment-gate",
+      "criterion": "Generation waits for an approved Alignment Gate containing observable Acceptance Criteria.",
+      "observableOutcome": "The Alignment Gate contains an observable Acceptance Criterion and explicitly asks for approval before delivery."
+    },
+    {
+      "id": "separated-fresh-run-delivery",
+      "criterion": "Delivery separates the English Final Prompt, Korean Review Translation, and Run Instructions and requires a Fresh Run.",
+      "observableOutcome": "Delivery has the three labelled sections in order and Run Instructions require a Fresh Run."
+    },
+    {
+      "id": "canonical-happy-path",
+      "criterion": "The happy-path Acceptance Scenario is demonstrably runnable through the canonical skill.",
+      "observableOutcome": "The canonical skill and observed happy-path transcript pass their deterministic contract checks."
+    }
+  ]
+}
