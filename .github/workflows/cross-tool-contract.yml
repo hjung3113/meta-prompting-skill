@@ -13,4 +13,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node tests/acceptance/validate-cross-tool-contract.mjs
+      - run: node tests/acceptance/validate-release-candidate.mjs
