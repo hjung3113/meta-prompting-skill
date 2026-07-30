@@ -6,6 +6,6 @@
   "invocation": "Ask OpenCode to use the meta-prompt skill",
   "scenario": "Installed the canonical skill into a clean Git project, started a Fresh Run, and requested that OpenCode use meta-prompt for the Context Dump scenario.",
   "exitCode": 0,
-  "result": "PASS: OpenCode 1.18.5 discovered the canonical skill at .opencode/skills/meta-prompt/SKILL.md. A clean-project Fresh Run on the default zai-coding-plan/glm-5.2 route loaded meta-prompt through the native skill tool and returned receipt-only Context Dump guidance.",
+  "observation": "OpenCode 1.18.5 discovered the canonical skill at .opencode/skills/meta-prompt/SKILL.md. A clean-project Fresh Run on the default zai-coding-plan/glm-5.2 route loaded meta-prompt through the native skill tool and returned receipt-only Context Dump guidance.",
   "limitations": "OpenCode permission.skill can still be ask or deny; approve a requested meta-prompt load when it is ask, and do not claim the skill loaded when it is deny. A --model zai/... override uses the raw Z.AI provider and is not evidence for the default adapter route."
 }

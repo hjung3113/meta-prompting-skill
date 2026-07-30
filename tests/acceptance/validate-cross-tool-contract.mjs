@@ -26,6 +26,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const canonicalSkillDirectory = resolve(root, "skills/meta-prompt");
 const canonicalSkillFile = resolve(canonicalSkillDirectory, "SKILL.md");
 const matrixPath = resolve(root, "tests/acceptance/acceptance-scenarios.json");
+const scenarioResultsPath = resolve(root, "tests/acceptance/tool-scenario-results.json");
 const firstClassTools = [
   { tool: "codex-cli", adapter: "codex", installedPath: ".agents/skills/meta-prompt", smokeRecord: "tests/acceptance/codex-smoke.json" },
   { tool: "claude-code", adapter: "claude", installedPath: ".claude/skills/meta-prompt", smokeRecord: "tests/acceptance/claude-smoke.json" },
@@ -114,6 +115,7 @@ async function assertDuplicateDetection() {
 async function assertUnifiedInstallation() {
   const project = await mkdtemp(resolve(tmpdir(), "meta-prompt-unified-install-"));
   const blockedProject = await mkdtemp(resolve(tmpdir(), "meta-prompt-unified-blocked-"));
+  const parentBlockedProject = await mkdtemp(resolve(tmpdir(), "meta-prompt-unified-parent-blocked-"));
   try {
     await execFileAsync("bash", [resolve(root, "skills.sh"), project]);
     for (const { installedPath } of firstClassTools) {
@@ -128,14 +130,46 @@ async function assertUnifiedInstallation() {
     );
     await assert.rejects(access(resolve(blockedProject, ".agents/skills/meta-prompt")));
     await assert.rejects(access(resolve(blockedProject, ".opencode/skills/meta-prompt")));
+    await writeFile(resolve(parentBlockedProject, ".claude"), "not a directory");
+    await assert.rejects(
+      execFileAsync("bash", [resolve(root, "skills.sh"), parentBlockedProject]),
+      (error) => error.code === 74,
+    );
+    for (const { installedPath } of firstClassTools) {
+      await assert.rejects(access(resolve(parentBlockedProject, installedPath)));
+    }
   } finally {
     await rm(project, { recursive: true, force: true });
     await rm(blockedProject, { recursive: true, force: true });
+    await rm(parentBlockedProject, { recursive: true, force: true });
+  }
+}
+
+async function assertPerToolInstallersRejectMissingProject() {
+  const fixture = await mkdtemp(resolve(tmpdir(), "meta-prompt-missing-project-"));
+  try {
+    for (const { adapter, installedPath } of firstClassTools) {
+      const missingProject = resolve(fixture, `${adapter}-typo`);
+      await assert.rejects(
+        execFileAsync("bash", [resolve(root, `adapters/${adapter}/install.sh`), missingProject]),
+        (error) => error.code === 66,
+      );
+      await assert.rejects(access(resolve(missingProject, installedPath)));
+      await assert.rejects(access(missingProject));
+    }
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
   }
 }
 
 async function assertMatrixCoverage() {
-  const matrix = JSON.parse(await readFile(matrixPath, "utf8"));
+  const [matrixSource, resultsSource, revisionResult] = await Promise.all([
+    readFile(matrixPath, "utf8"),
+    readFile(scenarioResultsPath, "utf8"),
+    execFileAsync("git", ["rev-parse", "HEAD"], { cwd: root }),
+  ]);
+  const matrix = JSON.parse(matrixSource);
+  const scenarioResults = JSON.parse(resultsSource);
   assert.equal(matrix.version, 1);
   assert.equal(matrix.canonicalSkill, "skills/meta-prompt/SKILL.md");
   assert.deepEqual(matrix.firstClassTools, firstClassTools.map(({ tool }) => tool));
@@ -156,8 +190,39 @@ async function assertMatrixCoverage() {
   for (const { tool, smokeRecord } of firstClassTools) {
     const smoke = JSON.parse(await readFile(resolve(root, smokeRecord), "utf8"));
     assert.equal(smoke.tool, tool);
-    assert.match(smoke.result, /^PASS:/);
+    assert.match(smoke.observation, /.+/);
   }
+  assertScenarioResults(scenarioResults, revisionResult.stdout.trim());
+  assert.throws(
+    () => assertScenarioResults({ ...scenarioResults, revision: "0".repeat(40) }, revisionResult.stdout.trim()),
+    /revision/,
+    "a stale revision-bound result set is rejected",
+  );
+  assert.throws(
+    () => assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }, revisionResult.stdout.trim()),
+    /exactly one result/,
+    "a missing tool/scenario pair is rejected",
+  );
+}
+
+function assertScenarioResults(scenarioResults, currentRevision) {
+  assert.equal(scenarioResults.version, 1);
+  assert.equal(scenarioResults.revision, currentRevision, "scenario results are bound to the checked-out revision");
+  const expectedPairs = new Set(
+    firstClassTools.flatMap(({ tool }) => expectedScenarioIds.map((scenarioId) => `${tool}:${scenarioId}`)),
+  );
+  assert.equal(scenarioResults.results.length, expectedPairs.size, "results contain exactly one result for each tool/scenario pair");
+  const actualPairs = new Set();
+  for (const result of scenarioResults.results) {
+    const pair = `${result.tool}:${result.scenarioId}`;
+    assert.ok(expectedPairs.has(pair), `result has a known tool/scenario pair: ${pair}`);
+    assert.ok(!actualPairs.has(pair), `result is not duplicated: ${pair}`);
+    actualPairs.add(pair);
+    assert.equal(result.revision, currentRevision, `result is revision-bound: ${pair}`);
+    assert.equal(result.outcome, "pass", `result records an observable passing outcome: ${pair}`);
+    assert.match(result.evidence, /^tests\/acceptance\/.+\.(?:json|mjs)$/);
+  }
+  assert.deepEqual(actualPairs, expectedPairs, "all required tool/scenario pairs are present");
 }
 
 async function assertAdapterMetadata() {
@@ -191,6 +256,7 @@ async function assertAdapterMetadata() {
 async function assertDeterministicCi() {
   const workflow = await readFile(resolve(root, ".github/workflows/cross-tool-contract.yml"), "utf8");
   assert.match(workflow, /node tests\/acceptance\/validate-release-candidate\.mjs/);
+  assert.match(workflow, /node tests\/acceptance\/validate-field-evaluation\.mjs/);
   assert.doesNotMatch(workflow, /\b(?:codex|claude|opencode)\s+run\b/i);
 }
 
@@ -214,6 +280,7 @@ export async function validateCrossToolContract() {
     assertDeterministicCi(),
   ]);
   await assertUnifiedInstallation();
+  await assertPerToolInstallersRejectMissingProject();
   await assertNoAdapterWorkflowCopies(resolve(root, "adapters"));
   await assertDuplicateDetection();
   return {

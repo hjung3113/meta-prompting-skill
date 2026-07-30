@@ -13,4 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node tests/acceptance/validate-release-candidate.mjs
+      - name: Release candidate
+        run: node tests/acceptance/validate-release-candidate.mjs
+      - name: Field Evaluation
+        run: node tests/acceptance/validate-field-evaluation.mjs

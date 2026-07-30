@@ -1,0 +1,59 @@
+name: Field Evaluation Report
+description: Report one sanitised Meta-Prompt Fresh Run for maintainer triage
+title: "[Field Evaluation] "
+labels: ["feedback", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use safe paraphrases only. Do not include raw Context Dumps, credentials,
+        private source, private paths, customer data, or sensitive Final Prompt values.
+  - type: textarea
+    id: sanitised-context
+    attributes:
+      label: Sanitised task and run context
+      description: Describe the task and Fresh Run using safe paraphrases only.
+    validations:
+      required: true
+  - type: textarea
+    id: prompt-quality
+    attributes:
+      label: Prompt quality
+      description: Score alignment fidelity, execution clarity, and verifiability as 0, 1, or 2.
+    validations:
+      required: true
+  - type: textarea
+    id: execution-outcome
+    attributes:
+      label: Execution outcome
+      description: State material rework or scope drift and each relevant approved criterion outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criterion-outcomes
+    attributes:
+      label: Acceptance Criterion outcomes
+      description: List safe criterion paraphrases, outcomes, and minimum observed evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: likely-cause
+    attributes:
+      label: Likely cause
+      description: Select Prompt, Target Tool/model, Environment or permissions, Input/context, or Unknown/mixed and state confidence.
+    validations:
+      required: true
+  - type: checkboxes
+    id: sanitisation-consent
+    attributes:
+      label: Sanitisation confirmation
+      options:
+        - label: I confirm this report is sanitised and contains no raw Context Dump, sensitive value, credential, private source, or private path.
+          required: true
+  - type: checkboxes
+    id: publication-consent
+    attributes:
+      label: Publication confirmation
+      options:
+        - label: I approve publication of this Field Evaluation Report for maintainer triage.
+          required: true

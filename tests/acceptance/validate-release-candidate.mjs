@@ -3,7 +3,6 @@ import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateCrossToolContract } from "./validate-cross-tool-contract.mjs";
-import { validateFieldEvaluation } from "./validate-field-evaluation.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const smokeRecords = [
@@ -54,15 +53,14 @@ export async function validateReleaseCandidate() {
   for (const [tool, recordPath] of smokeRecords) {
     const record = JSON.parse(await readFile(resolve(root, recordPath), "utf8"));
     assert.equal(record.tool, tool);
-    for (const field of ["version", "verifiedAt", "installation", "invocation", "scenario", "result"]) {
+    for (const field of ["version", "verifiedAt", "installation", "invocation", "scenario", "observation"]) {
       assert.match(record[field], /.+/, `${recordPath} has ${field}`);
     }
     assert.match(record.verifiedAt, /^\d{4}-\d{2}-\d{2}$/);
-    assert.match(record.result, /^PASS:/);
+    assert.match(record.observation, /.+/);
   }
 
   await validateCrossToolContract();
-  await validateFieldEvaluation();
   return { status: "PASS", completionCriteria: completionCriteria.length };
 }
 

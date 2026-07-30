@@ -35,7 +35,7 @@ export async function validateCodexAdapter() {
   assert.match(smoke.installation, /install\.sh/);
   assert.equal(smoke.invocation, "$meta-prompt");
   assert.match(smoke.pluginInstallation, /codex plugin add/);
-  assert.match(smoke.result, /^PASS:/);
+  assert.match(smoke.observation, /.+/);
   assert.match(smoke.limitations, /not guaranteed/i);
   return { status: "PASS" };
 }

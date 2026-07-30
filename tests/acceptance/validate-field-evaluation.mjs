@@ -27,7 +27,7 @@ async function assertNoFieldEvaluationOrEgressInProductSurface(directory) {
 export async function validateFieldEvaluation() {
   const [guide, template, readme, skill, workflow] = await Promise.all([
     readFile(resolve(root, "docs/field-evaluation.md"), "utf8"),
-    readFile(resolve(root, ".github/ISSUE_TEMPLATE/field-evaluation.md"), "utf8"),
+    readFile(resolve(root, ".github/ISSUE_TEMPLATE/field-evaluation.yml"), "utf8"),
     readFile(resolve(root, "README.md"), "utf8"),
     readFile(resolve(root, "skills/meta-prompt/SKILL.md"), "utf8"),
     readFile(resolve(root, ".github/workflows/cross-tool-contract.yml"), "utf8"),
@@ -58,21 +58,22 @@ export async function validateFieldEvaluation() {
 
   assert.match(template, /^name: Field Evaluation Report$/m);
   assert.match(template, /^labels: \["feedback", "needs-triage"\]$/m);
-  assert.match(template, /Prompt quality/i);
-  assert.match(template, /Execution outcome/i);
-  assert.match(template, /Acceptance Criterion outcomes/i);
-  assert.match(template, /I confirm this report is sanitised/i);
-  assert.match(template, /I approve publication/i);
+  for (const field of ["Prompt quality", "Execution outcome", "Acceptance Criterion outcomes"]) {
+    assert.match(template, new RegExp(`label: ${field}`));
+  }
+  for (const consent of ["sanitisation-consent", "publication-consent"]) {
+    assert.match(template, new RegExp(`id: ${consent}[\\s\\S]*?required: true`));
+  }
+  assert.match(template, /raw Context Dump/i);
+  assert.match(template, /credentials/i);
 
   assert.doesNotMatch(skill, /Field Evaluation|GitHub feedback issue|automatic issue/i);
   assert.deepEqual(
     [...workflow.matchAll(/^\s*- uses: (.+)$/gm)].map((match) => match[1]),
     ["actions/checkout@v4", "actions/setup-node@v4"],
   );
-  assert.deepEqual(
-    [...workflow.matchAll(/^\s*- run: (.+)$/gm)].map((match) => match[1]),
-    ["node tests/acceptance/validate-release-candidate.mjs"],
-  );
+  assert.match(workflow, /name: Release candidate\s+run: node tests\/acceptance\/validate-release-candidate\.mjs/);
+  assert.match(workflow, /name: Field Evaluation\s+run: node tests\/acceptance\/validate-field-evaluation\.mjs/);
   assert.match(workflow, /^\s*node-version: 22$/m);
   await Promise.all([
     assertNoFieldEvaluationOrEgressInProductSurface(resolve(root, "skills")),
