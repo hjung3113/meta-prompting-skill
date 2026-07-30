@@ -192,22 +192,52 @@ async function assertMatrixCoverage() {
     assert.equal(smoke.tool, tool);
     assert.match(smoke.observation, /.+/);
   }
-  assertScenarioResults(scenarioResults, revisionResult.stdout.trim());
-  assert.throws(
-    () => assertScenarioResults({ ...scenarioResults, revision: "0".repeat(40) }, revisionResult.stdout.trim()),
-    /revision/,
-    "a stale revision-bound result set is rejected",
+  const currentRevision = revisionResult.stdout.trim();
+  await assertScenarioResults(scenarioResults, currentRevision);
+  const staleRevision = "9d788736e4f7cff52bb8ffb736d0249f9563ac77";
+  const staleResults = {
+    ...scenarioResults,
+    revision: staleRevision,
+    results: scenarioResults.results.map((result) => ({ ...result, revision: staleRevision })),
+  };
+  await assert.rejects(
+    assertScenarioResults(staleResults, currentRevision),
+    /revision-bound evidence no longer matches the contract surface/,
+    "a result set becomes stale when its tested contract changes",
   );
-  assert.throws(
-    () => assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }, revisionResult.stdout.trim()),
+  await assert.rejects(
+    assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }, currentRevision),
     /exactly one result/,
     "a missing tool/scenario pair is rejected",
   );
 }
 
-function assertScenarioResults(scenarioResults, currentRevision) {
+async function assertScenarioResults(scenarioResults, currentRevision) {
   assert.equal(scenarioResults.version, 1);
-  assert.equal(scenarioResults.revision, currentRevision, "scenario results are bound to the checked-out revision");
+  assert.match(scenarioResults.revision, /^[0-9a-f]{40}$/);
+  await execFileAsync("git", ["merge-base", "--is-ancestor", scenarioResults.revision, currentRevision], { cwd: root });
+  const contractChanged = await execFileAsync(
+    "git",
+    [
+      "diff",
+      "--quiet",
+      scenarioResults.revision,
+      currentRevision,
+      "--",
+      "skills/meta-prompt",
+      "adapters",
+      "tests/acceptance/acceptance-scenarios.json",
+      "tests/acceptance/observed-happy-path.json",
+    ],
+    { cwd: root },
+  ).then(
+    () => false,
+    (error) => {
+      if (error.code !== 1) throw error;
+      return true;
+    },
+  );
+  assert.equal(contractChanged, false, "revision-bound evidence no longer matches the contract surface");
   const expectedPairs = new Set(
     firstClassTools.flatMap(({ tool }) => expectedScenarioIds.map((scenarioId) => `${tool}:${scenarioId}`)),
   );
@@ -218,7 +248,7 @@ function assertScenarioResults(scenarioResults, currentRevision) {
     assert.ok(expectedPairs.has(pair), `result has a known tool/scenario pair: ${pair}`);
     assert.ok(!actualPairs.has(pair), `result is not duplicated: ${pair}`);
     actualPairs.add(pair);
-    assert.equal(result.revision, currentRevision, `result is revision-bound: ${pair}`);
+    assert.equal(result.revision, scenarioResults.revision, `result is revision-bound: ${pair}`);
     assert.equal(result.outcome, "pass", `result records an observable passing outcome: ${pair}`);
     assert.match(result.evidence, /^tests\/acceptance\/.+\.(?:json|mjs)$/);
   }
