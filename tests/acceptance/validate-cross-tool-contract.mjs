@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import {
   access,
   lstat,
@@ -39,6 +40,14 @@ const expectedScenarioIds = [
   "approved-alignment-gate",
   "separated-fresh-run-delivery",
   "canonical-happy-path",
+];
+const evidenceContractPaths = [
+  "skills/meta-prompt/SKILL.md",
+  "adapters/codex/install.sh",
+  "adapters/claude/install.sh",
+  "adapters/opencode/install.sh",
+  "tests/acceptance/acceptance-scenarios.json",
+  "tests/acceptance/observed-happy-path.json",
 ];
 const workflowMarkers = [
   "context dump",
@@ -163,10 +172,9 @@ async function assertPerToolInstallersRejectMissingProject() {
 }
 
 async function assertMatrixCoverage() {
-  const [matrixSource, resultsSource, revisionResult] = await Promise.all([
+  const [matrixSource, resultsSource] = await Promise.all([
     readFile(matrixPath, "utf8"),
     readFile(scenarioResultsPath, "utf8"),
-    execFileAsync("git", ["rev-parse", "HEAD"], { cwd: root }),
   ]);
   const matrix = JSON.parse(matrixSource);
   const scenarioResults = JSON.parse(resultsSource);
@@ -192,22 +200,30 @@ async function assertMatrixCoverage() {
     assert.equal(smoke.tool, tool);
     assert.match(smoke.observation, /.+/);
   }
-  assertScenarioResults(scenarioResults, revisionResult.stdout.trim());
-  assert.throws(
-    () => assertScenarioResults({ ...scenarioResults, revision: "0".repeat(40) }, revisionResult.stdout.trim()),
-    /revision/,
-    "a stale revision-bound result set is rejected",
+  await assertScenarioResults(scenarioResults);
+  await assert.rejects(
+    assertScenarioResults({
+    ...scenarioResults,
+      contractDigest: "0".repeat(64),
+    }),
+    /revision-bound evidence no longer matches the contract surface/,
+    "a result set becomes stale when its tested contract changes",
   );
-  assert.throws(
-    () => assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }, revisionResult.stdout.trim()),
+  await assert.rejects(
+    assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }),
     /exactly one result/,
     "a missing tool/scenario pair is rejected",
   );
 }
 
-function assertScenarioResults(scenarioResults, currentRevision) {
+async function assertScenarioResults(scenarioResults) {
   assert.equal(scenarioResults.version, 1);
-  assert.equal(scenarioResults.revision, currentRevision, "scenario results are bound to the checked-out revision");
+  assert.match(scenarioResults.revision, /^[0-9a-f]{40}$/);
+  assert.equal(
+    scenarioResults.contractDigest,
+    await calculateEvidenceContractDigest(),
+    "revision-bound evidence no longer matches the contract surface",
+  );
   const expectedPairs = new Set(
     firstClassTools.flatMap(({ tool }) => expectedScenarioIds.map((scenarioId) => `${tool}:${scenarioId}`)),
   );
@@ -218,11 +234,20 @@ function assertScenarioResults(scenarioResults, currentRevision) {
     assert.ok(expectedPairs.has(pair), `result has a known tool/scenario pair: ${pair}`);
     assert.ok(!actualPairs.has(pair), `result is not duplicated: ${pair}`);
     actualPairs.add(pair);
-    assert.equal(result.revision, currentRevision, `result is revision-bound: ${pair}`);
+    assert.equal(result.revision, scenarioResults.revision, `result is revision-bound: ${pair}`);
     assert.equal(result.outcome, "pass", `result records an observable passing outcome: ${pair}`);
     assert.match(result.evidence, /^tests\/acceptance\/.+\.(?:json|mjs)$/);
   }
   assert.deepEqual(actualPairs, expectedPairs, "all required tool/scenario pairs are present");
+}
+
+async function calculateEvidenceContractDigest() {
+  const contents = await Promise.all(
+    evidenceContractPaths.map(async (path) => [path, await readFile(resolve(root, path), "utf8")]),
+  );
+  const digest = createHash("sha256");
+  for (const [path, content] of contents) digest.update(`${path}\0${content}\0`);
+  return digest.digest("hex");
 }
 
 async function assertAdapterMetadata() {

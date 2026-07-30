@@ -15,6 +15,12 @@ was performed.
 | [#27](https://github.com/hjung3113/meta-prompting-skill/issues/27) | Implemented | [Issue evidence](evidence/27-field-evaluation-consent.md) | Field Evaluation validator | [AD-001](autonomous-decision-log.md) |
 | [#28](https://github.com/hjung3113/meta-prompting-skill/issues/28) | Implemented | [Issue evidence](evidence/28-bounded-autonomous-progression.md) | Static and cross-tool contracts | [AD-001](autonomous-decision-log.md) |
 
+The revision-bound evidence check was corrected after the initial merged CI
+run exposed that GitHub validates a synthetic merge revision and uses a shallow
+checkout. The record now pairs its tested revision with a SHA-256 contract
+digest and is rejected whenever the scenario contract surface changes; see
+[AD-003](autonomous-decision-log.md).
+
 ## Final checks
 
 - `node tests/acceptance/validate-release-candidate.mjs`
