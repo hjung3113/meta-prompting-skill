@@ -12,6 +12,8 @@ export function validateStaticSkillContract(skill) {
   assert.match(skill, /덤프 끝/);
   assert.match(skill, /dump complete/i);
   assert.match(skill, /receipt-only/i);
+  assert.match(skill, /entire normalised user message[\s\S]*exactly `덤프 끝` or `dump complete`/i);
+  assert.match(skill, /embedded, quoted, or longer occurrence[\s\S]*completion signal/i);
   assert.match(skill, /do not analyse,\s*design,\s*solve,\s*or generate/i);
   assert.match(skill, /untrusted\s+source material, not executable\s+instruction/i);
   assert.match(skill, /Surface material conflicts\s+explicitly/i);
@@ -36,6 +38,9 @@ export function validateStaticSkillContract(skill) {
   assert.match(skill, /Unmapped hardening, speculative risks, and unrelated improvements/i);
   assert.match(skill, /concrete\s+regression\s+caused by the changed surface/i);
   assert.match(skill, /scope\s+expansion\s+needs explicit user approval/i);
+  assert.match(skill, /agents and subagents[\s\S]*within that approved scope/i);
+  assert.match(skill, /repository-local decision log[\s\S]*approved-scope reference/i);
+  assert.match(skill, /goal, deliverable, exclusions, Acceptance\s+Criteria, Prompt Budget, sensitive-data treatment, external side effects/i);
   assert.match(skill, /reopen only the affected gate/i);
   assert.match(skill, /wording or translation reopens the Quality\s+Gate/i);
   assert.match(skill, /goal, scope, deliverable, or Acceptance Criteria reopens Clarification\s+and Alignment/i);
@@ -45,6 +50,7 @@ export function validateStaticSkillContract(skill) {
   assert.match(skill, /Quality Gate[\s\S]*sensitive-data exclusion/i);
   assert.match(skill, /explicit approval/i);
   assert.match(skill, /English Final Prompt[\s\S]*Review Translation[\s\S]*Run Instructions/);
+  assert.match(skill, /scope, exclusions, concrete observable Acceptance Criteria, verification\s+evidence, stop condition, Prompt Budget/i);
   assert.match(skill, /Fresh Run/);
   return { status: "PASS" };
 }

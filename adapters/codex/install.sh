@@ -12,6 +12,10 @@ source_skill="$source_root/skills/meta-prompt"
 target_dir="$target_project/.agents/skills"
 target_skill="$target_dir/meta-prompt"
 
+if [[ ! -d "$target_project" ]]; then
+  echo "project directory does not exist: $target_project" >&2
+  exit 66
+fi
 if [[ ! -f "$source_skill/SKILL.md" ]]; then
   echo "canonical Meta-Prompt skill is missing" >&2
   exit 66

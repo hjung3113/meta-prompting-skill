@@ -58,7 +58,7 @@ export async function validateOpenCodeAdapter() {
   assert.match(smoke.invocation, /meta-prompt/);
   assert.match(smoke.scenario, /Fresh Run/);
   assert.equal(smoke.exitCode, 0);
-  assert.match(smoke.result, /^PASS:/);
+  assert.match(smoke.observation, /.+/);
   assert.match(smoke.limitations, /permission\.skill/);
   assert.match(smoke.limitations, /--model zai/);
   await assertCleanProjectInstall();

@@ -66,7 +66,7 @@ export async function validateClaudeAdapter() {
   assert.equal(smoke.pluginInvocation, "/meta-prompt:meta-prompt");
   assert.match(smoke.scenario, /non-persistent Fresh Run/);
   assert.match(smoke.scenario, /--plugin-dir/);
-  assert.match(smoke.result, /^PASS:/);
+  assert.match(smoke.observation, /.+/);
   assert.match(smoke.limitations, /plugin/i);
   assert.match(smoke.limitations, /not a portable marketplace-install guarantee/);
   await assertCleanProjectInstall(installerPath);

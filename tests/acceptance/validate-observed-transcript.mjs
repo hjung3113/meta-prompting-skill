@@ -6,13 +6,20 @@ import { fileURLToPath } from "node:url";
 const directory = dirname(fileURLToPath(import.meta.url));
 const labels = ["English Final Prompt", "Review Translation", "Run Instructions"];
 
+export function isDumpCompleteSignal(message) {
+  return ["덤프 끝", "dump complete"].includes(message.trim().toLowerCase());
+}
+
 export function validateObservedTranscript(turns) {
   assert.match(turns[0].assistant, /Context Dump/i, "first turn teaches the dump");
   assert.match(turns[0].assistant, /덤프 끝|dump complete/i, "first turn teaches completion");
   assert.match(turns[0].assistant, /receipt-only|receipt only/i, "first turn teaches receipt-only behavior");
   assert.match(turns[1].assistant, /received|receipt/i, "open dump gets a receipt");
   assert.doesNotMatch(turns[1].assistant, /plan|design|solution/i, "receipt contains no analysis");
-  assert.match(turns[2].user, /dump complete|덤프 끝/i, "dump completes explicitly");
+  assert.equal(isDumpCompleteSignal(turns[2].user), true, "dump completes only on an exact normalized signal");
+  for (const message of ["I saw dump complete", "\"dump complete\"", "please dump complete this"]) {
+    assert.equal(isDumpCompleteSignal(message), false, `embedded or quoted signal remains dump material: ${message}`);
+  }
   const decisionTurns = turns.filter((turn) => /Recommendation:/.test(turn.assistant));
   assert.ok(decisionTurns.length >= 1, "a recommendation is offered");
   for (const turn of decisionTurns) {
@@ -24,12 +31,17 @@ export function validateObservedTranscript(turns) {
   assert.match(gate.assistant, /In scope:/i, "gate records in-scope work");
   assert.match(gate.assistant, /Exclusions:/i, "gate records exclusions");
   assert.match(gate.assistant, /Minimum evidence:/i, "gate records proportional evidence");
+  assert.match(gate.assistant, /Verification evidence:/i, "gate records verification evidence");
   assert.match(gate.assistant, /Stop condition:/i, "gate records its stop condition");
+  assert.match(gate.assistant, /Prompt Budget:/i, "gate confirms a prompt budget");
   assert.match(gate.assistant, /approve/i, "gate requests approval");
   const delivery = turns.at(-1).assistant;
   assert.deepEqual(labels.map((label) => delivery.indexOf(label)), [...labels.map((label) => delivery.indexOf(label))].sort((a, b) => a - b), "delivery order");
   for (const label of labels) assert.ok(delivery.includes(label), `delivery includes ${label}`);
   assert.match(delivery, /Execution Scope Contract/i, "delivery has the scope contract");
+  for (const field of ["In scope:", "Exclusions:", "Acceptance Criteria:", "Verification evidence:", "Stop condition:", "Prompt Budget:"]) {
+    assert.match(delivery, new RegExp(field), `delivery preserves approved gate field ${field}`);
+  }
   assert.match(delivery, /mapped to the approved Acceptance Criteria/i, "scope contract maps current work to approved criteria");
   assert.match(delivery, /follow-up suggestions/i, "scope contract routes unmapped work to follow-up");
   assert.match(delivery, /changed surface may block/i, "scope contract retains concrete-regression blocking");
