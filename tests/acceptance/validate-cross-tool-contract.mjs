@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import {
   access,
   lstat,
@@ -39,6 +40,14 @@ const expectedScenarioIds = [
   "approved-alignment-gate",
   "separated-fresh-run-delivery",
   "canonical-happy-path",
+];
+const evidenceContractPaths = [
+  "skills/meta-prompt/SKILL.md",
+  "adapters/codex/install.sh",
+  "adapters/claude/install.sh",
+  "adapters/opencode/install.sh",
+  "tests/acceptance/acceptance-scenarios.json",
+  "tests/acceptance/observed-happy-path.json",
 ];
 const workflowMarkers = [
   "context dump",
@@ -163,10 +172,9 @@ async function assertPerToolInstallersRejectMissingProject() {
 }
 
 async function assertMatrixCoverage() {
-  const [matrixSource, resultsSource, revisionResult] = await Promise.all([
+  const [matrixSource, resultsSource] = await Promise.all([
     readFile(matrixPath, "utf8"),
     readFile(scenarioResultsPath, "utf8"),
-    execFileAsync("git", ["rev-parse", "HEAD"], { cwd: root }),
   ]);
   const matrix = JSON.parse(matrixSource);
   const scenarioResults = JSON.parse(resultsSource);
@@ -192,52 +200,30 @@ async function assertMatrixCoverage() {
     assert.equal(smoke.tool, tool);
     assert.match(smoke.observation, /.+/);
   }
-  const currentRevision = revisionResult.stdout.trim();
-  await assertScenarioResults(scenarioResults, currentRevision);
-  const staleRevision = "9d788736e4f7cff52bb8ffb736d0249f9563ac77";
-  const staleResults = {
-    ...scenarioResults,
-    revision: staleRevision,
-    results: scenarioResults.results.map((result) => ({ ...result, revision: staleRevision })),
-  };
+  await assertScenarioResults(scenarioResults);
   await assert.rejects(
-    assertScenarioResults(staleResults, currentRevision),
+    assertScenarioResults({
+    ...scenarioResults,
+      contractDigest: "0".repeat(64),
+    }),
     /revision-bound evidence no longer matches the contract surface/,
     "a result set becomes stale when its tested contract changes",
   );
   await assert.rejects(
-    assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }, currentRevision),
+    assertScenarioResults({ ...scenarioResults, results: scenarioResults.results.slice(1) }),
     /exactly one result/,
     "a missing tool/scenario pair is rejected",
   );
 }
 
-async function assertScenarioResults(scenarioResults, currentRevision) {
+async function assertScenarioResults(scenarioResults) {
   assert.equal(scenarioResults.version, 1);
   assert.match(scenarioResults.revision, /^[0-9a-f]{40}$/);
-  await execFileAsync("git", ["merge-base", "--is-ancestor", scenarioResults.revision, currentRevision], { cwd: root });
-  const contractChanged = await execFileAsync(
-    "git",
-    [
-      "diff",
-      "--quiet",
-      scenarioResults.revision,
-      currentRevision,
-      "--",
-      "skills/meta-prompt",
-      "adapters",
-      "tests/acceptance/acceptance-scenarios.json",
-      "tests/acceptance/observed-happy-path.json",
-    ],
-    { cwd: root },
-  ).then(
-    () => false,
-    (error) => {
-      if (error.code !== 1) throw error;
-      return true;
-    },
+  assert.equal(
+    scenarioResults.contractDigest,
+    await calculateEvidenceContractDigest(),
+    "revision-bound evidence no longer matches the contract surface",
   );
-  assert.equal(contractChanged, false, "revision-bound evidence no longer matches the contract surface");
   const expectedPairs = new Set(
     firstClassTools.flatMap(({ tool }) => expectedScenarioIds.map((scenarioId) => `${tool}:${scenarioId}`)),
   );
@@ -253,6 +239,15 @@ async function assertScenarioResults(scenarioResults, currentRevision) {
     assert.match(result.evidence, /^tests\/acceptance\/.+\.(?:json|mjs)$/);
   }
   assert.deepEqual(actualPairs, expectedPairs, "all required tool/scenario pairs are present");
+}
+
+async function calculateEvidenceContractDigest() {
+  const contents = await Promise.all(
+    evidenceContractPaths.map(async (path) => [path, await readFile(resolve(root, path), "utf8")]),
+  );
+  const digest = createHash("sha256");
+  for (const [path, content] of contents) digest.update(`${path}\0${content}\0`);
+  return digest.digest("hex");
 }
 
 async function assertAdapterMetadata() {

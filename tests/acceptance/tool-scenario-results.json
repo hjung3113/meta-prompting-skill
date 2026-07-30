@@ -1,6 +1,7 @@
 {
   "version": 1,
   "revision": "091ad0b5586960e6dfa56a9318bf2749745c96c2",
+  "contractDigest": "42d591b3a831661b3d0aa5d768b60ed42fa6eaa8579780ca990789edb3fcedf2",
   "results": [
     {"tool":"codex-cli","scenarioId":"first-use-context-dump","revision":"091ad0b5586960e6dfa56a9318bf2749745c96c2","outcome":"pass","evidence":"tests/acceptance/codex-smoke.json"},
     {"tool":"codex-cli","scenarioId":"receipt-before-completion","revision":"091ad0b5586960e6dfa56a9318bf2749745c96c2","outcome":"pass","evidence":"tests/acceptance/observed-happy-path.json"},
